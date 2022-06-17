@@ -5,7 +5,9 @@
   "description": "Simple Discord bot using Discord.js",
   "main": "index.js",
   "scripts": {
-    "serve": "node index.js",
+    "systemd-ci": "( [ ! -d \"./node_modules\" ] && npm ci ) || true",
+    "deploy-commands": "node ./deploy-commands.js",
+    "serve": "node ./index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Anthony Loop",
