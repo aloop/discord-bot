@@ -1,6 +1,6 @@
 module.exports = {
     token: {
         accessToken: null,
-        expiresAt: 0
-    }
+        expiresAt: 0,
+    },
 };
