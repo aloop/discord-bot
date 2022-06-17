@@ -11,7 +11,7 @@ Copy `config.example.json` to `config.json` and fill in the fields
 Until I figure out a better method, you'll need to set the permissions of the base
 directory to allow other users write access (note that only the base directory needs this permission, this gives the systemd service has permission to create the node_modules folder).
 
-The service is setup to both run an npm install if necessary, and run `npm run deploy-commands` before starting the server proper.
+The service is setup to run an npm clean-install if necessary before the server is started.
 
 ```sh
 sudo cp systemd/discord-bot.service /etc/systemd/system/
@@ -23,6 +23,5 @@ sudo systemctl start discord-bot
 
 ```sh
 npm ci
-npm run deploy-commands
 npm run serve
 ```

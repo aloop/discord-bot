@@ -12,7 +12,6 @@ Environment="NODE_ENV=production"
 Environment="HOME=%S/discord-bot/home"
 LoadCredential=config.json:/srv/node/discord-bot/config.json
 ExecStartPre=npm run systemd-ci
-ExecStartPre=npm run deploy-commands
 ExecStart=npm run serve
 Restart=always
 
