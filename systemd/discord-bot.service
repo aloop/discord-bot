@@ -1,31 +1,37 @@
 [Unit]
 Description=A Simple Discord Bot
 After=network.target network-online.target
+AssertPathExists=/srv/node/discord-bot/config.json
 
 [Service]
 DynamicUser=true
 RestartSec=5s
 Type=simple
 WorkingDirectory=/srv/node/discord-bot
+Environment="NODE_ENV=production"
+Environment="HOME=%S/discord-bot/home"
+LoadCredential=config.json:/srv/node/discord-bot/config.json
 ExecStartPre=npm run systemd-ci
 ExecStartPre=npm run deploy-commands
 ExecStart=npm run serve
 Restart=always
-Environment="NODE_ENV=production"
-Environment="HOME=%S/discord-bot/home"
 
-NoNewPrivileges=true
-PrivateTmp=true
-PrivateDevices=true
+NoNewPrivileges=yes
+PrivateTmp=yes
+PrivateDevices=yes
 ProtectHome=tmpfs
 ProtectSystem=strict
-ProtectKernelTunables=true
-ProtectKernelModules=true
-ProtectControlGroups=true
-RestrictSUIDSGID=true
-RestrictRealtime=true
-RestrictNamespaces=true
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectKernelLogs=yes
+ProtectControlGroups=yes
+ProtectHostname=yes
+ProtectClock=yes
+RestrictNamespaces=yes
+RestrictRealtime=yes
 RestrictAddressFamilies=AF_INET AF_INET6
+RestrictSUIDSGID=yes
+SystemCallArchitectures=native
 
 SystemCallFilter=@system-service
 SystemCallErrorNumber=EPERM

@@ -3,7 +3,7 @@ const axios = require('axios').default;
 
 const { token } = require('../store.js');
 
-const { blizzard: { client_id, client_secret } } = require("../config.json");
+const { blizzard } = require('../config.js')();
 
 const host = "https://us.api.blizzard.com"
 
@@ -17,8 +17,8 @@ async function getAuthToken() {
         method: "POST",
         url: 'https://us.battle.net/oauth/token',
         auth: {
-            username: client_id,
-            password: client_secret
+            username: blizzard.client_id,
+            password: blizzard.client_secret
         },
         data: "grant_type=client_credentials"
     });
