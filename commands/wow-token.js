@@ -5,7 +5,9 @@ const { token } = require("../store.js");
 
 const { blizzard } = require("../config.js")();
 
-const host = "https://us.api.blizzard.com";
+const authTokenUrl = "https://us.battle.net/oauth/token";
+const tokenPriceUrl =
+    "https://us.api.blizzard.com/data/wow/token/index?namespace=dynamic-us";
 
 async function getAuthToken() {
     if (token.accessToken !== null && token.expiresAt > Date.now()) {
@@ -15,7 +17,7 @@ async function getAuthToken() {
 
     const auth_response = await axios({
         method: "POST",
-        url: "https://us.battle.net/oauth/token",
+        url: authTokenUrl,
         auth: {
             username: blizzard.client_id,
             password: blizzard.client_secret,
@@ -32,7 +34,7 @@ async function getAuthToken() {
 async function getTokenPrice() {
     const response = await axios({
         method: "GET",
-        url: `${host}/data/wow/token/index?namespace=dynamic-us`,
+        url: tokenPriceUrl,
         headers: {
             Authorization: `Bearer ${await getAuthToken()}`,
         },
@@ -47,9 +49,17 @@ module.exports = {
         .setName("wowtoken")
         .setDescription("Displays the current WoW token price in gold"),
     async execute(interaction) {
-        const formattedPrice = (await getTokenPrice()).toLocaleString();
-        await interaction.reply(
-            `The WoW token price is currently **${formattedPrice} gold**`
-        );
+        try {
+            const formattedPrice = (await getTokenPrice()).toLocaleString();
+            await interaction.reply(
+                `The WoW token price is currently **${formattedPrice} gold**`
+            );
+        } catch (err) {
+            console.error(err);
+            await interaction.reply({
+                content: "Failed to fetch the current WoW token price",
+                ephemeral: true,
+            });
+        }
     },
 };
