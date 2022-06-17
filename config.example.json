@@ -1,0 +1,9 @@
+{
+	"clientId": "",
+	"guildId": "",
+	"token": "",
+    "blizzard": {
+        "client_id": "",
+        "client_secret": ""
+    }
+}
