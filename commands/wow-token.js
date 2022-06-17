@@ -43,11 +43,11 @@ async function getTokenPrice() {
 }
 
 module.exports = {
-	data: new SlashCommandBuilder()
-		.setName('wowtoken')
-		.setDescription('Displays the current WoW token price in gold'),
-	async execute(interaction) {
+    data: new SlashCommandBuilder()
+        .setName('wowtoken')
+        .setDescription('Displays the current WoW token price in gold'),
+    async execute(interaction) {
         const formattedPrice = (await getTokenPrice()).toLocaleString();
-		await interaction.reply(`The WoW token price is currently **${formattedPrice} gold**`);
-	},
+        await interaction.reply(`The WoW token price is currently **${formattedPrice} gold**`);
+    },
 };
