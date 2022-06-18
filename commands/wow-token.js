@@ -54,9 +54,10 @@ module.exports = {
     async execute(interaction) {
         try {
             const formattedPrice = (await getTokenPrice()).toLocaleString();
-            await interaction.reply(
-                `The WoW token price is currently **${formattedPrice} gold**`
-            );
+            await interaction.reply({
+                content: `The WoW token price is currently **${formattedPrice} gold**`,
+                ephemeral: true,
+            });
         } catch (err) {
             console.error(err);
             await interaction.reply({
