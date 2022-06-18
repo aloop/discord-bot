@@ -26,10 +26,10 @@ async function getAuthToken() {
         },
     });
 
-    const data = await auth_response.json();
+    const { access_token, expires_in } = await auth_response.json();
 
-    token.expiresAt = Date.now() + parseInt(data.expires_in, 10);
-    token.accessToken = data.access_token;
+    token.expiresAt = Date.now() + parseInt(expires_in, 10);
+    token.accessToken = access_token;
 
     return token.accessToken;
 }
@@ -41,10 +41,10 @@ async function getTokenPrice() {
         },
     });
 
-    const data = await response.json();
+    const { price } = await response.json();
 
     // Price is in copper, convert to gold
-    return data.price / 100 / 100;
+    return price / 100 / 100;
 }
 
 module.exports = {
