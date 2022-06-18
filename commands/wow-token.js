@@ -1,8 +1,10 @@
-const { SlashCommandBuilder } = require("@discordjs/builders");
+import { SlashCommandBuilder } from "@discordjs/builders";
 
-const { token } = require("../store.js");
+import { token } from "../store.js";
 
-const { blizzard } = require("../config.js")();
+import loadConfig from "../config.js";
+
+const { blizzard } = await loadConfig();
 
 const authTokenUrl =
     "https://us.battle.net/oauth/token?grant_type=client_credentials";
@@ -47,23 +49,22 @@ async function getTokenPrice() {
     return price / 100 / 100;
 }
 
-module.exports = {
-    data: new SlashCommandBuilder()
-        .setName("wowtoken")
-        .setDescription("Displays the current WoW token price in gold"),
-    async execute(interaction) {
-        try {
-            const formattedPrice = (await getTokenPrice()).toLocaleString();
-            await interaction.reply({
-                content: `The WoW token price is currently **${formattedPrice} gold**`,
-                ephemeral: true,
-            });
-        } catch (err) {
-            console.error(err);
-            await interaction.reply({
-                content: "Failed to fetch the current WoW token price",
-                ephemeral: true,
-            });
-        }
-    },
-};
+export const data = new SlashCommandBuilder()
+    .setName("wowtoken")
+    .setDescription("Displays the current WoW token price in gold");
+
+export async function execute(interaction) {
+    try {
+        const formattedPrice = (await getTokenPrice()).toLocaleString();
+        await interaction.reply({
+            content: `The WoW token price is currently **${formattedPrice} gold**`,
+            ephemeral: true,
+        });
+    } catch (err) {
+        console.error(err);
+        await interaction.reply({
+            content: "Failed to fetch the current WoW token price",
+            ephemeral: true,
+        });
+    }
+}

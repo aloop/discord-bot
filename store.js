@@ -1,6 +1,4 @@
-module.exports = {
-    token: {
-        accessToken: null,
-        expiresAt: 0,
-    },
+export const token = {
+    accessToken: null,
+    expiresAt: 0,
 };
