@@ -9,7 +9,6 @@ RestartSec=5s
 Type=simple
 WorkingDirectory=/srv/node/discord-bot
 Environment="NODE_ENV=production"
-Environment="NODE_PATH=%S/discord-bot/node_modules"
 Environment="HOME=%S/discord-bot/home"
 LoadCredential=config.json:/srv/node/discord-bot/config.json
 ExecStartPre=ln -sf /srv/node/discord-bot/package.json %S/discord-bot/package.json
@@ -50,6 +49,7 @@ SocketBindDeny=any
 
 TemporaryFileSystem=/srv:ro
 BindReadOnlyPaths=/srv/node/discord-bot/
+BindPaths=/srv/node/discord-bot/node_modules
 
 [Install]
 WantedBy=multi-user.target

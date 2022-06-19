@@ -4,6 +4,8 @@
     "token": "",
     "blizzard": {
         "client_id": "",
-        "client_secret": ""
+        "client_secret": "",
+        "authTokenUrl": "https://us.battle.net/oauth/token?grant_type=client_credentials",
+        "tokenPriceUrl": "https://us.api.blizzard.com/data/wow/token/index?namespace=dynamic-us"
     }
 }

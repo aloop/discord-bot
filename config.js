@@ -10,18 +10,12 @@ export default async function loadConfig() {
     }
 
     try {
-        if (process.env.CREDENTIALS_DIRECTORY) {
-            config = (
-                await import(
-                    `${process.env.CREDENTIALS_DIRECTORY}/config.json`,
-                    assertJSON
-                )
-            ).default;
-        }
-
-        config = (await import("./config.json", assertJSON)).default;
-
-        return config;
+        return (config = (
+            await import(
+                `${process.env.CREDENTIALS_DIRECTORY ?? "."}/config.json`,
+                assertJSON
+            )
+        ).default);
     } catch (err) {
         console.error(
             "Unable to load config.json, make sure it exists and you have permission to read the file",
