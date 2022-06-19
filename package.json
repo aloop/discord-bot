@@ -9,7 +9,6 @@
     "type": "module",
     "main": "index.js",
     "scripts": {
-        "systemd-ci": "( [ ! -d \"./node_modules\" ] && npm ci ) || true",
         "deploy-commands": "node deploy-commands.js",
         "serve": "node deploy-commands.js && node index.js",
         "test": "echo \"Error: no test specified\" && exit 1"

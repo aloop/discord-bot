@@ -9,9 +9,12 @@ RestartSec=5s
 Type=simple
 WorkingDirectory=/srv/node/discord-bot
 Environment="NODE_ENV=production"
+Environment="NODE_PATH=%S/discord-bot/node_modules"
 Environment="HOME=%S/discord-bot/home"
 LoadCredential=config.json:/srv/node/discord-bot/config.json
-ExecStartPre=npm run systemd-ci
+ExecStartPre=ln -sf /srv/node/discord-bot/package.json %S/discord-bot/package.json
+ExecStartPre=ln -sf /srv/node/discord-bot/package-lock.json %S/discord-bot/package-lock.json
+ExecStartPre=npm --prefix "%S/discord-bot/" ci
 ExecStart=npm run serve
 Restart=always
 
@@ -45,7 +48,8 @@ AmbientCapabilities=
 
 SocketBindDeny=any
 
-BindPaths=/srv/node/discord-bot
+TemporaryFileSystem=/srv:ro
+BindReadOnlyPaths=/srv/node/discord-bot/
 
 [Install]
 WantedBy=multi-user.target
