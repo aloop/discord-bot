@@ -24,8 +24,7 @@ const fetchLatestQuery = `
 `;
 
 export async function getLatest() {
-    const result = await db.get(getLatestQuery);
-    const { updated_at, price } = result;
+    const { updated_at, price } = await db.get(getLatestQuery);
 
     return {
         updatedAt: updated_at,

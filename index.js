@@ -8,6 +8,21 @@ import loadConfig from "./config.js";
 
 const { token } = await loadConfig();
 
+const cronTasksPath = path.join(
+    path.dirname(fileURLToPath(import.meta.url)),
+    "cron-tasks"
+);
+
+const cronTasks = fs
+    .readdirSync(cronTasksPath)
+    .filter((file) => file.endsWith(".js"));
+
+for (const file of cronTasks) {
+    const filePath = path.join(cronTasksPath, file);
+    const cronTask = await import(filePath);
+    await cronTask?.start?.();
+}
+
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
 
 client.commands = new Collection();
