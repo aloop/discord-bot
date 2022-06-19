@@ -14,21 +14,20 @@ export async function execute(interaction) {
         // I'm pretty sure the token price is only updated every 20 minutes,
         // so we'll do some math and figure out how much time we have until the
         // next update.
-        const updateTime = Math.ceil(
-            (new Date(updatedAt + 20 * 60 * 1000) - Date.now()) / (60 * 1000)
+        const expiresAt = new Date(updatedAt + 20 * 60 * 1000);
+        const updateTime = Math.max(
+            Math.ceil((expiresAt - Date.now()) / (60 * 1000)),
+            1
         );
 
         const embed = new MessageEmbed()
             .setTitle("World of Warcraft Token Price")
-            .addFields(
-                {
-                    name: "Current Price",
-                    value: `**${price.toLocaleString()}** gold`,
-                },
-                {
-                    name: "Next Update",
-                    value: `In approximately **${updateTime}** minutes`,
-                }
+            .addField("Current Price", `**${price.toLocaleString()}** gold`)
+            .addField(
+                "Next Update",
+                `In approximately **${updateTime}** ${
+                    updateTime === 1 ? "minute" : "minutes"
+                }`
             );
 
         await interaction.reply({
