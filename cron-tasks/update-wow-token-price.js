@@ -8,15 +8,15 @@ export function stop() {
     }
 }
 
-export async function start() {
-    // Fetch the latest token price before starting the timer
-    await fetchLatest();
+// 15 minutes in milliseconds
+const intervalLength = 15 * 1000 * 60;
 
+export async function start() {
     if (!intervalId) {
         intervalId = setInterval(async () => {
             console.log("Cron Task: WoW token price update triggered");
 
             await fetchLatest();
-        }, 5 * 1000 * 60);
+        }, intervalLength);
     }
 }

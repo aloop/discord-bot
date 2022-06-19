@@ -16,7 +16,7 @@ await db.migrate();
 
 const getLatestQuery = `SELECT * FROM token_prices ORDER BY id DESC`;
 const getAllQuery = getLatestQuery;
-const fetchLatestQuery = `
+const insertPriceQuery = `
     INSERT INTO token_prices
         (updated_at,price)
     VALUES
@@ -25,6 +25,11 @@ const fetchLatestQuery = `
 
 export async function getLatest() {
     const { updated_at, price } = await db.get(getLatestQuery);
+
+    // If the stored price is older than 20 minutes fetch the latest price
+    if (new Date(updated_at + 20 * 60 * 1000) < Date.now()) {
+        return await fetchLatest();
+    }
 
     return {
         updatedAt: updated_at,
@@ -45,7 +50,7 @@ export async function fetchLatest() {
     const { updatedAt, price } = await fetchTokenPrice();
 
     try {
-        await db.run(fetchLatestQuery, {
+        await db.run(insertPriceQuery, {
             ":updated_at": updatedAt,
             ":price": price,
         });
