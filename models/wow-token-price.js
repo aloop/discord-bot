@@ -15,13 +15,21 @@ const db = await open({
 await db.migrate();
 
 const getLatestQuery = `SELECT * FROM token_prices ORDER BY id DESC`;
-const getAllQuery = getLatestQuery;
+const getAllQuery = `SELECT * FROM token_prices ORDER BY id`;
+const getLast30DaysQuery = `SELECT price, updated_at FROM token_prices WHERE updated_at/1000 >= unixepoch('now','-30 days') ORDER BY id`;
+const getLast24HoursQuery = `SELECT price, updated_at FROM token_prices WHERE updated_at/1000 >= unixepoch('now','-24 hours') ORDER BY id`;
+
 const insertPriceQuery = `
     INSERT INTO token_prices
         (updated_at,price)
     VALUES
         (:updated_at,:price);
 `;
+
+const formatResult = ({ updated_at, price }) => ({
+    updatedAt: updated_at,
+    price,
+});
 
 export async function getLatest() {
     const { updated_at, price } = await db.get(getLatestQuery);
@@ -37,13 +45,22 @@ export async function getLatest() {
     };
 }
 
-export async function getAll() {
-    const results = await db.all(getAllQuery);
+export async function getAll(order = "DESC") {
+    const results = await db.all(`${getAllQuery} ${order}`);
 
-    return results.map(({ updated_at, price }) => ({
-        updatedAt: updated_at,
-        price,
-    }));
+    return results.map(formatResult);
+}
+
+export async function getLast30Days(order = "DESC") {
+    const results = await db.all(`${getLast30DaysQuery} ${order}`);
+
+    return results.map(formatResult);
+}
+
+export async function getLast24Hours(order = "DESC") {
+    const results = await db.all(`${getLast24HoursQuery} ${order}`);
+
+    return results.map(formatResult);
 }
 
 export async function fetchLatest() {

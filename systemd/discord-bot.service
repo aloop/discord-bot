@@ -46,6 +46,7 @@ CapabilityBoundingSet=
 AmbientCapabilities=
 
 SocketBindDeny=any
+SocketBindAllow=tcp:5000
 
 TemporaryFileSystem=/srv:ro
 BindReadOnlyPaths=/srv/node/discord-bot/

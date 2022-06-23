@@ -8,6 +8,8 @@ import loadConfig from "./config.js";
 
 const { token } = await loadConfig();
 
+import { startHTTPServer } from "./http/server.js";
+
 const cronTasksPath = path.join(
     path.dirname(fileURLToPath(import.meta.url)),
     "cron-tasks"
@@ -43,7 +45,7 @@ for (const file of commandFiles) {
 }
 
 client.once("ready", () => {
-    console.log("Ready!");
+    console.log("Discord.js Ready");
 });
 
 client.on("interactionCreate", async (interaction) => {
@@ -65,3 +67,6 @@ client.on("interactionCreate", async (interaction) => {
 });
 
 client.login(token);
+
+// Start HTTP server
+startHTTPServer();

@@ -2,6 +2,8 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import { MessageEmbed } from "discord.js";
 
 import { getLatest } from "../models/wow-token-price.js";
+import loadConfig from "../config.js";
+const config = await loadConfig();
 
 export const data = new SlashCommandBuilder()
     .setName("wowtoken")
@@ -28,7 +30,8 @@ export async function execute(interaction) {
                 `In approximately **${updateTime}** ${
                     updateTime === 1 ? "minute" : "minutes"
                 }`
-            );
+            )
+            .setImage(`${config.http.host}/wow-token/charts/last-24-hours`);
 
         await interaction.reply({
             embeds: [embed],
