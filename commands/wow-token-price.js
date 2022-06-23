@@ -35,11 +35,7 @@ export async function execute(interaction) {
 
         let imageUrl = `${config.http.host}/wow-token/charts/last-24-hours?t=${updatedAt}`;
 
-        const period = interaction.options.getString("period");
-
-        if (period) {
-            imageUrl = `${config.http.host}/wow-token/charts/last-${period}?t=${updatedAt}`;
-        }
+        const period = interaction.options.getString("chart") || "24-hours";
 
         const embed = new MessageEmbed()
             .setTitle("World of Warcraft Token Price")
@@ -50,7 +46,9 @@ export async function execute(interaction) {
                     updateTime === 1 ? "minute" : "minutes"
                 }`
             )
-            .setImage(imageUrl);
+            .setImage(
+                `${config.http.host}/wow-token/charts/last-${period}?t=${updatedAt}`
+            );
 
         await interaction.reply({
             embeds: [embed],
