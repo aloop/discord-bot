@@ -12,6 +12,7 @@ const pngResponse = (res, imageBase64) => {
     res.writeHead(200, {
         "Content-Type": "image/png",
         "Content-Length": image.length,
+        "Cache-Control": "no-cache, no-store",
     });
 
     res.end(image);
@@ -19,12 +20,18 @@ const pngResponse = (res, imageBase64) => {
 
 const routes = {
     default(req, res) {
-        res.writeHead(404, { "Content-Type": "text/plain" });
+        res.writeHead(404, {
+            "Content-Type": "text/plain",
+            "Cache-Control": "no-cache, no-store",
+        });
         res.end(`404: Page not found`);
     },
 
     badRequest(req, res) {
-        res.writeHead(400, { "Content-Type": "text/plain" });
+        res.writeHead(400, {
+            "Content-Type": "text/plain",
+            "Cache-Control": "no-cache, no-store",
+        });
         res.end(`400: Bad Request`);
     },
 
