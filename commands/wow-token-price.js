@@ -7,7 +7,18 @@ const config = await loadConfig();
 
 export const data = new SlashCommandBuilder()
     .setName("wowtoken")
-    .setDescription("Displays the current WoW token price in gold");
+    .setDescription("Displays the current WoW token price in gold")
+    .addStringOption((option) => {
+        return option
+            .setName("chart")
+            .setDescription(
+                "Define the time period used when generating the price history"
+            )
+            .addChoices(
+                { name: "24 hours", value: "24-hours" },
+                { name: "30 days", value: "30-days" }
+            );
+    });
 
 export async function execute(interaction) {
     try {
@@ -22,6 +33,14 @@ export async function execute(interaction) {
             1
         );
 
+        let imageUrl = `${config.http.host}/wow-token/charts/last-24-hours?t=${updatedAt}`;
+
+        const period = interaction.options.getString("period");
+
+        if (period) {
+            imageUrl = `${config.http.host}/wow-token/charts/last-${period}?t=${updatedAt}`;
+        }
+
         const embed = new MessageEmbed()
             .setTitle("World of Warcraft Token Price")
             .addField("Current Price", `**${price.toLocaleString()}** gold`)
@@ -31,9 +50,7 @@ export async function execute(interaction) {
                     updateTime === 1 ? "minute" : "minutes"
                 }`
             )
-            .setImage(
-                `${config.http.host}/wow-token/charts/last-24-hours?t=${updatedAt}`
-            );
+            .setImage(imageUrl);
 
         await interaction.reply({
             embeds: [embed],
