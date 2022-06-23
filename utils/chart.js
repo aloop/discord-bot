@@ -49,7 +49,7 @@ export async function generateChart(data, timeUnit = "hour") {
                         unit: timeUnit,
                         displayFormats: {
                             day: "MMM do",
-                            hour: "h aaa",
+                            hour: "haaa",
                         },
                     },
                 },
