@@ -51,8 +51,9 @@ const routes = {
 export function startHTTPServer() {
     const server = http.createServer(async (req, res) => {
         const { host } = new URL(config.http.host);
+        const url = new URL(req.url, `https://${req.headers.host}`);
 
-        if (req.headers.host !== host) {
+        if (url.host !== host) {
             console.error(
                 "HTTP Server: bad request, host name and port do not match"
             );
@@ -60,7 +61,7 @@ export function startHTTPServer() {
             return;
         }
 
-        switch (req.url) {
+        switch (url.pathname) {
             case "/wow-token/charts/last-24-hours":
                 await routes.tokenLast24Hours(req, res);
                 break;

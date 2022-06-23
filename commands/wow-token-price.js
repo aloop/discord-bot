@@ -31,7 +31,9 @@ export async function execute(interaction) {
                     updateTime === 1 ? "minute" : "minutes"
                 }`
             )
-            .setImage(`${config.http.host}/wow-token/charts/last-24-hours`);
+            .setImage(
+                `${config.http.host}/wow-token/charts/last-24-hours?t=${updatedAt}`
+            );
 
         await interaction.reply({
             embeds: [embed],
