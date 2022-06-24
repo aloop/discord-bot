@@ -12,9 +12,9 @@ Environment="NODE_ENV=production"
 Environment="HOME=%S/discord-bot/home"
 LoadCredential=config.json:/srv/node/discord-bot/config.json
 ExecStartPre=ln -sf /srv/node/discord-bot/package.json %S/discord-bot/package.json
-ExecStartPre=ln -sf /srv/node/discord-bot/package-lock.json %S/discord-bot/package-lock.json
-ExecStartPre=npm --prefix "%S/discord-bot/" ci
-ExecStart=npm run serve
+ExecStartPre=ln -sf /srv/node/discord-bot/pnpm-lock.yaml %S/discord-bot/pnpm-lock.yaml
+ExecStartPre=pnpm install -C "%S/discord-bot/" --prod --frozen-lockfile
+ExecStart=pnpm run serve
 Restart=always
 
 NoNewPrivileges=yes

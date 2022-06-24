@@ -8,7 +8,7 @@ Copy `config.example.json` to `config.json` and fill in the fields
 
 ### With systemd
 
-The service is setup to run an `npm clean-install` before the server is started.
+The service is setup to run `pnpm install --prod --frozen-lockfile` before the server is started.
 
 Note that if you have changed the listenPort in config.json from the default of 5000 you will need to change `SocketBindAllow=tcp:5000` in `discord-bot.service` to reflect that change
 
@@ -22,6 +22,6 @@ sudo systemctl start discord-bot
 ### Without systemd
 
 ```sh
-npm ci
-npm run serve
+pnpm install --prod --frozen-lockfile
+pnpm run serve
 ```
