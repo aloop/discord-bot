@@ -49,8 +49,7 @@ SocketBindDeny=any
 SocketBindAllow=tcp:5000
 
 TemporaryFileSystem=/srv:ro
-BindReadOnlyPaths=/srv/node/discord-bot/
-BindPaths=/srv/node/discord-bot/node_modules
+BindPaths=/srv/node/discord-bot/
 
 [Install]
 WantedBy=multi-user.target
