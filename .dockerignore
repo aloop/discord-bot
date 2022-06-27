@@ -1,0 +1,9 @@
+Dockerfile
+config.example.json
+docker-compose.example.yml
+.git/
+db/
+node_modules/
+node_modules.systemd
+.node-version
+README.md

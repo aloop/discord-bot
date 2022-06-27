@@ -1,0 +1,12 @@
+services:
+    discord-bot:
+        image: ghcr.io/aloop/discord-bot:latest
+        restart: unless-stopped
+        user: 1000:1000 # userid:groupid
+        volumes:
+            - ./db:/app/db
+            - ./config.json:/app/config.json:ro
+        ports:
+            - 127.0.0.1:5000:5000/tcp
+        environment:
+            TZ: America/Los_Angeles

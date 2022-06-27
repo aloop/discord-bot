@@ -6,7 +6,17 @@ Copy `config.example.json` to `config.json` and fill in the fields
 
 ## Installation
 
-### With systemd
+### Docker
+
+#### Docker Compose
+
+Copy `docker-compose.example.yml` from this repository and alter it to your liking.
+
+#### Docker Run
+
+`docker run --rm -d -p 127.0.0.1:5000:5000/tcp -v "$(pwd)/config.json:/app/config.json:ro" -v "$(pwd)/db:/app/db" aloop/discord-bot:latest`
+
+### systemd
 
 The service is setup to run `pnpm install --prod --frozen-lockfile` before the server is started.
 
@@ -19,7 +29,7 @@ sudo systemctl daemon-reload
 sudo systemctl start discord-bot
 ```
 
-### Without systemd
+### Standalone
 
 ```sh
 pnpm install --prod --frozen-lockfile
