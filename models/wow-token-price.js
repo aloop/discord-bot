@@ -32,16 +32,17 @@ const formatResult = ({ updated_at, price }) => ({
 });
 
 export async function getLatest() {
-    const { updated_at, price } = await db.get(getLatestQuery);
+    const result = await db.get(getLatestQuery);
 
-    // If the stored price is older than 20 minutes fetch the latest price
-    if (new Date(updated_at + 20 * 60 * 1000) < Date.now()) {
+    // If there is no result, or the stored price is older than 20 minutes,
+    // fetch the latest price from the blizzard api
+    if (!result || new Date(result.updated_at + 20 * 60 * 1000) < Date.now()) {
         return await fetchLatest();
     }
 
     return {
-        updatedAt: updated_at,
-        price,
+        updatedAt: result.updated_at,
+        price: result.price,
     };
 }
 
