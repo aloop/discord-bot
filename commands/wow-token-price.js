@@ -2,7 +2,7 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import { MessageEmbed } from "discord.js";
 
 import { getLatest } from "../models/wow-token-price.js";
-import loadConfig from "../config.js";
+import loadConfig from "../utils/config.js";
 const config = await loadConfig();
 
 export const data = new SlashCommandBuilder()

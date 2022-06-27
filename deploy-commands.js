@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 import { REST } from "@discordjs/rest";
 import { Routes } from "discord-api-types/v9";
 
-import loadConfig from "./config.js";
+import loadConfig from "./utils/config.js";
 
 const { clientId, guildId, token } = await loadConfig();
 

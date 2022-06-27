@@ -17,7 +17,7 @@ export default async function loadConfig() {
     try {
         // Immediately store the promise to try and avoid multiple requests
         configPromise = import(
-            `${process.env.CREDENTIALS_DIRECTORY ?? "."}/config.json`,
+            `${process.env.CREDENTIALS_DIRECTORY ?? ".."}/config.json`,
             assertJSON
         );
 

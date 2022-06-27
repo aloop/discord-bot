@@ -1,4 +1,4 @@
-import loadConfig from "../config.js";
+import loadConfig from "../utils/config.js";
 
 const { blizzard } = await loadConfig();
 

@@ -3,7 +3,7 @@ import http from "http";
 import { generateChart } from "../utils/chart.js";
 import { getLast30Days, getLast24Hours } from "../models/wow-token-price.js";
 
-import loadConfig from "../config.js";
+import loadConfig from "../utils/config.js";
 const config = await loadConfig();
 
 const pngResponse = (res, imageBase64) => {

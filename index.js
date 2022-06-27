@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 
 import { Client, Collection, Intents } from "discord.js";
 
-import loadConfig from "./config.js";
+import loadConfig from "./utils/config.js";
 
 const { token } = await loadConfig();
 
