@@ -1,5 +1,6 @@
 import { ChartJSNodeCanvas } from "chartjs-node-canvas";
 import "chartjs-adapter-date-fns";
+import singularize from "./singularize.js";
 
 const chart = new ChartJSNodeCanvas({
     width: 400,
@@ -13,13 +14,21 @@ const formatToChartData = ({ updatedAt, price }) => ({
     y: price,
 });
 
-export async function generateChart(data, timeUnit = "hour") {
+export async function generateChart(data, period, unit) {
+    period = Math.abs(period);
+
+    let timeFrame = `${period} ${unit}`;
+
+    if (period === 1) {
+        timeFrame = singularize(unit);
+    }
+
+    let label = `Wow Token Price History - Last ${timeFrame}`;
+
     const chartData = {
         datasets: [
             {
-                label: `Wow Token Price History - Last ${
-                    timeUnit === "hour" ? "24 hours" : "30 days"
-                }`,
+                label,
                 data: data.map(formatToChartData),
                 pointRadius: 0,
                 fill: false,
@@ -46,7 +55,7 @@ export async function generateChart(data, timeUnit = "hour") {
                     },
                     type: "time",
                     time: {
-                        unit: timeUnit,
+                        unit: singularize(unit),
                         displayFormats: {
                             day: "MMM do",
                             hour: "haaa",

@@ -16,8 +16,7 @@ await db.migrate();
 
 const getLatestQuery = `SELECT * FROM token_prices ORDER BY id DESC`;
 const getAllQuery = `SELECT * FROM token_prices ORDER BY id`;
-const getLast30DaysQuery = `SELECT price, updated_at FROM token_prices WHERE updated_at/1000 >= unixepoch('now','-30 days') ORDER BY id`;
-const getLast24HoursQuery = `SELECT price, updated_at FROM token_prices WHERE updated_at/1000 >= unixepoch('now','-24 hours') ORDER BY id`;
+const getAllSinceQuery = `SELECT price, updated_at FROM token_prices WHERE updated_at/1000 >= unixepoch('now',?) ORDER BY id`;
 
 const insertPriceQuery = `
     INSERT INTO token_prices
@@ -46,20 +45,26 @@ export async function getLatest() {
     };
 }
 
-export async function getAll(order = "DESC") {
-    const results = await db.all(`${getAllQuery} ${order}`);
+export async function getAll(descending = true) {
+    const results = await db.all(
+        `${getAllQuery} ${descending ? "DESC" : "ASC"}`
+    );
 
     return results.map(formatResult);
 }
 
-export async function getLast30Days(order = "DESC") {
-    const results = await db.all(`${getLast30DaysQuery} ${order}`);
+export async function getAllSince(
+    period = -24,
+    unit = "hours",
+    descending = true
+) {
+    // Ensure that the time is negative
+    const timeFrame = `${Math.abs(period) * -1} ${unit}`;
 
-    return results.map(formatResult);
-}
-
-export async function getLast24Hours(order = "DESC") {
-    const results = await db.all(`${getLast24HoursQuery} ${order}`);
+    const results = await db.all(
+        `${getAllSinceQuery} ${descending ? "DESC" : "ASC"}`,
+        timeFrame
+    );
 
     return results.map(formatResult);
 }

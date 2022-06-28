@@ -1,79 +1,61 @@
-import http from "http";
+import http from "node:http";
 
 import { generateChart } from "../utils/chart.js";
-import { getLast30Days, getLast24Hours } from "../models/wow-token-price.js";
+import { getAllSince } from "../models/wow-token-price.js";
+import Router from "../utils/router.js";
 
 import loadConfig from "../utils/config.js";
 const config = await loadConfig();
 
-const pngResponse = (res, imageBase64) => {
-    const image = Buffer.from(imageBase64.split(",")[1], "base64");
+const handlers = {
+    async tokenChart(request, response, url, params) {
+        const period = parseInt(params.period, 10);
+        const { unit } = params;
 
-    res.writeHead(200, {
-        "Content-Type": "image/png",
-        "Content-Length": image.length,
-        "Cache-Control": "no-cache, no-store",
-    });
+        const data = await getAllSince(period, unit);
+        const chart = await generateChart(data, period, unit);
 
-    res.end(image);
-};
+        const image = Buffer.from(chart.split(",")[1], "base64");
 
-const routes = {
-    default(req, res) {
-        res.writeHead(404, {
-            "Content-Type": "text/plain",
+        response.writeHead(200, {
+            "Content-Type": "image/png",
+            "Content-Length": image.length,
             "Cache-Control": "no-cache, no-store",
         });
-        res.end(`404: Page not found`);
-    },
 
-    badRequest(req, res) {
-        res.writeHead(400, {
-            "Content-Type": "text/plain",
-            "Cache-Control": "no-cache, no-store",
-        });
-        res.end(`400: Bad Request`);
-    },
-
-    async tokenLast24Hours(req, res) {
-        const data = await getLast24Hours("ASC");
-        const chart = await generateChart(data, "hour");
-        pngResponse(res, chart);
-    },
-
-    async tokenLast30Days(req, res) {
-        const data = await getLast30Days("ASC");
-        const chart = await generateChart(data, "day");
-        pngResponse(res, chart);
+        response.end(image);
     },
 };
 
 export function startHTTPServer() {
-    const server = http.createServer(async (req, res) => {
-        const { host } = new URL(config.http.host);
-        const url = new URL(req.url, `https://${req.headers.host}`);
+    const router = new Router();
 
-        if (url.host !== host) {
-            console.error(
-                "HTTP Server: bad request, host name and port do not match"
-            );
-            routes.badRequest(req, res);
-            return;
+    router.setHost(config.http.host);
+
+    router.get(
+        /^\/wow-token\/chart\/(?<unit>hours|days)\/(?<period>[1-9][0-9]?)\/?$/,
+        handlers.tokenChart
+    );
+
+    router.get(
+        // Only allow up to 12 months
+        /^\/wow-token\/chart\/(?<unit>months)\/(?<period>[1-9]|1[0-2])\/?$/,
+        handlers.tokenChart
+    );
+
+    const server = http.createServer(
+        {
+            keepAlive: true,
+        },
+        (request, response) => {
+            try {
+                router.run(request, response);
+            } catch (err) {
+                console.error(err);
+                Router.handlers.serverError(request, response);
+            }
         }
-
-        switch (url.pathname) {
-            case "/wow-token/charts/last-24-hours":
-                await routes.tokenLast24Hours(req, res);
-                break;
-            case "/wow-token/charts/last-30-days":
-                await routes.tokenLast30Days(req, res);
-                break;
-
-            default:
-                routes.default(req, res);
-                break;
-        }
-    });
+    );
 
     server.once("listening", () => {
         console.log("HTTP server started");

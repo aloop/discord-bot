@@ -15,10 +15,33 @@ export const data = new SlashCommandBuilder()
                 "Define the time period used when generating the price history"
             )
             .addChoices(
-                { name: "24 hours", value: "24-hours" },
-                { name: "30 days", value: "30-days" }
+                {
+                    name: "24 hours",
+                    value: JSON.stringify({ period: 24, unit: "hours" }),
+                },
+                {
+                    name: "48 hours",
+                    value: JSON.stringify({ period: 48, unit: "hours" }),
+                },
+                {
+                    name: "10 days",
+                    value: JSON.stringify({ period: 10, unit: "days" }),
+                },
+                {
+                    name: "30 days",
+                    value: JSON.stringify({ period: 30, unit: "days" }),
+                },
+                {
+                    name: "3 months",
+                    value: JSON.stringify({ period: 3, unit: "months" }),
+                }
             );
     });
+
+const defaultOptions = Object.freeze({
+    period: 48,
+    unit: "hours",
+});
 
 export async function execute(interaction) {
     try {
@@ -33,9 +56,9 @@ export async function execute(interaction) {
             1
         );
 
-        let imageUrl = `${config.http.host}/wow-token/charts/last-24-hours?t=${updatedAt}`;
-
-        const period = interaction.options.getString("chart") || "24-hours";
+        const options = interaction.options.getString("chart");
+        const { period, unit } =
+            options !== null ? JSON.parse(options) : defaultOptions;
 
         const embed = new MessageEmbed()
             .setTitle("World of Warcraft Token Price")
@@ -47,7 +70,7 @@ export async function execute(interaction) {
                 }`
             )
             .setImage(
-                `${config.http.host}/wow-token/charts/last-${period}?t=${updatedAt}`
+                `${config.http.host}/wow-token/chart/${unit}/${period}?t=${updatedAt}`
             );
 
         await interaction.reply({
