@@ -1,7 +1,7 @@
 {
     "name": "discord-bot",
     "private": true,
-    "version": "0.1.0",
+    "version": "0.2.1",
     "description": "Simple Discord bot using Discord.js",
     "engines": {
         "node": ">=18"
@@ -22,8 +22,8 @@
         "chartjs-adapter-date-fns": "^2.0.0",
         "chartjs-node-canvas": "^4.1.6",
         "date-fns": "^2.28.0",
-        "discord-api-types": "^0.34.0",
-        "discord.js": "^13.8.0",
+        "discord-api-types": "^0.35.0",
+        "discord.js": "^13.8.1",
         "sqlite": "^4.1.1",
         "sqlite3": "^5.0.8"
     }
