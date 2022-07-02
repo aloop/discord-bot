@@ -12,14 +12,28 @@ export function startHTTPServer() {
     router.setHost(config.http.host);
 
     router.get(
-        /^\/wow-token\/chart\/(?<unit>hours|days)\/(?<period>[1-9][0-9]?)\/?$/,
-        handlers.tokenChart
+        /^\/wow-token\/chart\/(?<unit>hours)\/(?<period>\d+)\/?$/,
+        handlers.tokenChart,
+        {
+            period: (period) => period >= 1 && period <= 72,
+        }
+    );
+
+    router.get(
+        /^\/wow-token\/chart\/(?<unit>days)\/(?<period>\d+)\/?$/,
+        handlers.tokenChart,
+        {
+            period: (period) => period >= 1 && period <= 90,
+        }
     );
 
     router.get(
         // Only allow up to 12 months
-        /^\/wow-token\/chart\/(?<unit>months)\/(?<period>[1-9]|1[0-2])\/?$/,
-        handlers.tokenChart
+        /^\/wow-token\/chart\/(?<unit>months)\/(?<period>\d+)\/?$/,
+        handlers.tokenChart,
+        {
+            period: (period) => period >= 1 && period <= 12,
+        }
     );
 
     const server = http.createServer(
