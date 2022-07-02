@@ -64,7 +64,7 @@ export default class Router {
      * @param {string} method The HTTP method to match against
      * @param {string|RegExp} path The path to match against
      * @param {(req, res, url: URL, params?: Object) => void} handler The Route handler
-     * @param {{ [paramName: string]: (param: string) => bool  }} constraints An object containing constraint functions for route param values
+     * @param {{ [paramName: string]: (param: string) => bool }} constraints An object containing constraint functions for route param values
      */
     route(method, path, handler, constraints = {}) {
         const lowerCased = method.toLowerCase();
@@ -82,7 +82,7 @@ export default class Router {
      *
      * @param {string|RegExp} path The path to match against
      * @param {(req, res, url: URL, params?: Object) => void} handler The Route handler
-     * @param {{ [paramName: string]: (param: string) => bool  }} constraints An object containing constraint functions for route param values
+     * @param {{ [paramName: string]: (param: string) => bool }} constraints An object containing constraint functions for route param values
      */
     options(path, handler, constraints = {}) {
         this.route("options", path, handler, constraints);
@@ -93,7 +93,7 @@ export default class Router {
      *
      * @param {string|RegExp} path The path to match against
      * @param {(req, res, url: URL, params?: Object) => void} handler The Route handler
-     * @param {{ [paramName: string]: (param: string) => bool  }} constraints An object containing constraint functions for route param values
+     * @param {{ [paramName: string]: (param: string) => bool }} constraints An object containing constraint functions for route param values
      */
     head(path, handler, constraints = {}) {
         this.route("head", path, handler, constraints);
@@ -104,7 +104,7 @@ export default class Router {
      *
      * @param {string|RegExp} path The path to match against
      * @param {(req, res, url: URL, params?: Object) => void} handler The Route handler
-     * @param {{ [paramName: string]: (param: string) => bool  }} constraints An object containing constraint functions for route param values
+     * @param {{ [paramName: string]: (param: string) => bool }} constraints An object containing constraint functions for route param values
      */
     get(path, handler, constraints = {}) {
         this.route("get", path, handler, constraints);
@@ -115,7 +115,7 @@ export default class Router {
      *
      * @param {string|RegExp} path The path to match against
      * @param {(req, res, url: URL, params?: Object) => void} handler The Route handler
-     * @param {{ [paramName: string]: (param: string) => bool  }} constraints An object containing constraint functions for route param values
+     * @param {{ [paramName: string]: (param: string) => bool }} constraints An object containing constraint functions for route param values
      */
     post(path, handler, constraints = {}) {
         this.route("post", path, handler, constraints);
@@ -126,7 +126,7 @@ export default class Router {
      *
      * @param {string|RegExp} path The path to match against
      * @param {(req, res, url: URL, params?: Object) => void} handler The Route handler
-     * @param {{ [paramName: string]: (param: string) => bool  }} constraints An object containing constraint functions for route param values
+     * @param {{ [paramName: string]: (param: string) => bool }} constraints An object containing constraint functions for route param values
      */
     put(path, handler, constraints = {}) {
         this.route("put", path, handler, constraints);
@@ -137,7 +137,7 @@ export default class Router {
      *
      * @param {string|RegExp} path The path to match against
      * @param {(req, res, url: URL, params?: Object) => void} handler The Route handler
-     * @param {{ [paramName: string]: (param: string) => bool  }} constraints An object containing constraint functions for route param values
+     * @param {{ [paramName: string]: (param: string) => bool }} constraints An object containing constraint functions for route param values
      */
     patch(path, handler, constraints = {}) {
         this.route("patch", path, handler, constraints);
@@ -148,7 +148,7 @@ export default class Router {
      *
      * @param {string|RegExp} path The path to match against
      * @param {(req, res, url: URL, params?: Object) => void} handler The Route handler
-     * @param {{ [paramName: string]: (param: string) => bool  }} constraints An object containing constraint functions for route param values
+     * @param {{ [paramName: string]: (param: string) => bool }} constraints An object containing constraint functions for route param values
      */
     delete(path, handler, constraints = {}) {
         this.route("delete", path, handler, constraints);
