@@ -3,6 +3,7 @@ import "chartjs-adapter-date-fns";
 import singularize from "./singularize.js";
 
 const chart = new ChartJSNodeCanvas({
+    type: "png",
     width: 400,
     height: 300,
     backgroundColour: "#36393f",
@@ -38,31 +39,34 @@ export async function generateChart(data, period, unit) {
         ],
     };
 
-    return await chart.renderToDataURL({
-        type: "line",
-        data: chartData,
-        options: {
-            color: "#ffffff",
-            scales: {
-                y: {
-                    ticks: {
-                        color: "#ffffff",
+    return await chart.renderToBuffer(
+        {
+            type: "line",
+            data: chartData,
+            options: {
+                color: "#ffffff",
+                scales: {
+                    y: {
+                        ticks: {
+                            color: "#ffffff",
+                        },
                     },
-                },
-                x: {
-                    ticks: {
-                        color: "#ffffff",
-                    },
-                    type: "time",
-                    time: {
-                        unit: singularize(unit),
-                        displayFormats: {
-                            day: "MMM do",
-                            hour: "haaa",
+                    x: {
+                        ticks: {
+                            color: "#ffffff",
+                        },
+                        type: "time",
+                        time: {
+                            unit: singularize(unit),
+                            displayFormats: {
+                                day: "MMM do",
+                                hour: "haaa",
+                            },
                         },
                     },
                 },
             },
         },
-    });
+        "image/png"
+    );
 }
