@@ -45,5 +45,8 @@ export function startHTTPServer() {
         console.log("HTTP server started");
     });
 
-    server.listen(config.http.listenPort || 5000);
+    server.listen(
+        config.http?.listenPort ?? 5000,
+        config.http?.listenHost ?? "localhost"
+    );
 }

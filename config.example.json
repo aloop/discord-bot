@@ -10,6 +10,7 @@
     },
     "http": {
         "host": "https://example.com",
+        "listenHost": "localhost",
         "listenPort": 5000
     }
 }

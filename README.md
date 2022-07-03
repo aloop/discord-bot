@@ -16,6 +16,10 @@ Copy `docker-compose.example.yml` from this repository and alter it to your liki
 
 `docker run --rm -d -p 127.0.0.1:5000:5000/tcp -v "$(pwd)/config.json:/app/config.json:ro" -v "$(pwd)/db:/app/db" aloop/discord-bot:latest`
 
+#### Docker notes
+
+You may want to set `listenHost` to 0.0.0.0 in your `config.json` so that the HTTP server binds to the container's ip.
+
 ### systemd
 
 The service is setup to run `pnpm install --prod --frozen-lockfile` before the server is started.
