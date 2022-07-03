@@ -13,6 +13,8 @@ const intervalLength = 15 * 1000 * 60;
 
 export async function start() {
     if (!intervalId) {
+        await fetchLatest();
+
         intervalId = setInterval(async () => {
             console.log("Cron Task: WoW token price update triggered");
 
