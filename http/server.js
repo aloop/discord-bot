@@ -11,26 +11,17 @@ export function startHTTPServer() {
 
     router.setHost(config.http.host);
 
-    router.get(
-        /^\/wow-token\/chart\/(?<unit>hours)\/(?<period>\d+)\/?$/,
-        handlers.tokenChart,
-        {
-            period: (period) => period >= 1 && period <= 72,
-        }
-    );
+    router.get("/wow-token/chart/hours/:period", handlers.tokenChart("hours"), {
+        period: (period) => period >= 1 && period <= 72,
+    });
+
+    router.get("/wow-token/chart/days/:period", handlers.tokenChart("days"), {
+        period: (period) => period >= 1 && period <= 90,
+    });
 
     router.get(
-        /^\/wow-token\/chart\/(?<unit>days)\/(?<period>\d+)\/?$/,
-        handlers.tokenChart,
-        {
-            period: (period) => period >= 1 && period <= 90,
-        }
-    );
-
-    router.get(
-        // Only allow up to 12 months
-        /^\/wow-token\/chart\/(?<unit>months)\/(?<period>\d+)\/?$/,
-        handlers.tokenChart,
+        "/wow-token/chart/months/:period",
+        handlers.tokenChart("months"),
         {
             period: (period) => period >= 1 && period <= 12,
         }

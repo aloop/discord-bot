@@ -1,3 +1,17 @@
+import stripLeadingSlash from "./strip-leading-slash.js";
+
+const regex = {
+    hasParam: /.*\/:.*/gu,
+    paramName: /^[a-zA-Z0-9\-_]+$/g,
+};
+
+class RouteParam {
+    name = null;
+    constructor(name) {
+        this.name = name;
+    }
+}
+
 /**
  * A basic router to let me use regex matching for requests
  */
@@ -45,6 +59,30 @@ export default class Router {
         delete: [],
     };
 
+    #processRoutePath(path) {
+        const parsedPath = [];
+        const segments = stripLeadingSlash(path).split("/");
+        for (const segment of segments) {
+            // Route parameter
+            if (segment[0] === ":") {
+                const param = segment.slice(1);
+
+                if (!param.match(regex.paramName)) {
+                    console.error(
+                        `Invalid route parameter name: ":${param}". Only letters, numbers, _, and - are allowed`
+                    );
+                    return;
+                }
+
+                parsedPath.push(new RouteParam(param));
+            } else {
+                parsedPath.push(segment);
+            }
+        }
+
+        return parsedPath;
+    }
+
     /**
      * Set the hostname required to respond to a request
      *
@@ -69,12 +107,15 @@ export default class Router {
     route(method, path, handler, constraints = {}) {
         const lowerCased = method.toLowerCase();
         if (this.#routes.hasOwnProperty(lowerCased))
-            this.#routes[lowerCased].push({
-                path,
-                handler,
-                constraints,
-                isRegex: path instanceof RegExp,
-            });
+            if (path.match(regex.hasParam)) {
+                path = this.#processRoutePath(path);
+            }
+
+        this.#routes[lowerCased].push({
+            path,
+            handler,
+            constraints,
+        });
     }
 
     /**
@@ -184,9 +225,34 @@ export default class Router {
         const method = request.method.toLowerCase();
 
         if (this.#routes.hasOwnProperty(method)) {
+            // Define this outside the loop so that we only need to split it once
+            let urlSegments = null;
+
             for (const route of this.#routes[method]) {
-                if (route.isRegex) {
-                    const params = url.pathname.match(route.path);
+                if (Array.isArray(route.path)) {
+                    urlSegments = stripLeadingSlash(url.pathname).split("/");
+
+                    // if we don't have the same number of segments, we aren't going to match
+                    if (route.path.length !== urlSegments.length) {
+                        continue;
+                    }
+
+                    let params;
+                    let i = 0;
+                    for (const routeSegment of route.path) {
+                        if (routeSegment instanceof RouteParam) {
+                            if (!params) {
+                                params = {};
+                            }
+
+                            params[routeSegment.name] = urlSegments[i];
+                        } else if (routeSegment !== urlSegments[i]) {
+                            params = null;
+                            break;
+                        }
+
+                        i++;
+                    }
 
                     if (!params) {
                         continue;
@@ -196,8 +262,8 @@ export default class Router {
 
                     for (const [paramName, constraint] of constraints) {
                         if (
-                            paramName in params.groups &&
-                            !constraint(params.groups[paramName])
+                            paramName in params &&
+                            !constraint(params[paramName])
                         ) {
                             return Router.handlers.badRequest(
                                 request,
@@ -206,12 +272,7 @@ export default class Router {
                         }
                     }
 
-                    return await route.handler(
-                        request,
-                        response,
-                        url,
-                        params.groups
-                    );
+                    return await route.handler(request, response, url, params);
                 } else if (route.path === url.pathname) {
                     // We don't apply any constraints to string path handlers
                     // because there are no params.
