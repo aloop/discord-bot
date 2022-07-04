@@ -1,6 +1,6 @@
 import http from "node:http";
 
-import Router from "../utils/router.js";
+import Router from "../lib/router.js";
 import * as handlers from "./handlers.js";
 
 import loadConfig from "../utils/config.js";
@@ -11,21 +11,16 @@ export function startHTTPServer() {
 
     router.setHost(config.http.host);
 
-    router.get("/wow-token/chart/hours/:period", handlers.tokenChart("hours"), {
-        period: (period) => period >= 1 && period <= 72,
-    });
-
-    router.get("/wow-token/chart/days/:period", handlers.tokenChart("days"), {
-        period: (period) => period >= 1 && period <= 90,
-    });
-
-    router.get(
-        "/wow-token/chart/months/:period",
-        handlers.tokenChart("months"),
-        {
+    router
+        .get("/wow-token/chart/hours/:period", handlers.tokenChart("hours"), {
+            period: (period) => period >= 1 && period <= 72,
+        })
+        .get("/wow-token/chart/days/:period", handlers.tokenChart("days"), {
+            period: (period) => period >= 1 && period <= 90,
+        })
+        .get("/wow-token/chart/months/:period", handlers.tokenChart("months"), {
             period: (period) => period >= 1 && period <= 12,
-        }
-    );
+        });
 
     const server = http.createServer(
         {
