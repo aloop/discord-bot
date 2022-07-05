@@ -1,5 +1,4 @@
 import { ChartJSNodeCanvas } from "chartjs-node-canvas";
-import "chartjs-adapter-date-fns";
 import singularize from "./singularize.js";
 
 const chart = new ChartJSNodeCanvas({
@@ -8,6 +7,9 @@ const chart = new ChartJSNodeCanvas({
     height: 300,
     backgroundColour: "#36393f",
     colour: "#ffffff",
+    plugins: {
+        globalVariableLegacy: ["chartjs-adapter-date-fns"],
+    },
 });
 
 const formatToChartData = ({ updatedAt, price }) => ({
