@@ -6,7 +6,9 @@ import { Routes } from "discord-api-types/v9";
 
 import loadConfig from "./utils/config.js";
 
-const { clientId, guildId, token } = await loadConfig();
+const {
+    discord: { clientId, guildId, token },
+} = await loadConfig();
 
 const commands = [];
 const commandsPath = path.join(

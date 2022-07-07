@@ -6,7 +6,9 @@ import { Client, Collection, Intents } from "discord.js";
 
 import loadConfig from "./utils/config.js";
 
-const { token } = await loadConfig();
+const {
+    discord: { token },
+} = await loadConfig();
 
 import { startHTTPServer } from "./http/server.js";
 

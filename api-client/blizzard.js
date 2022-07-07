@@ -11,7 +11,7 @@ async function fetchAuthToken() {
     }
 
     const credentials = Buffer.from(
-        `${blizzard.client_id}:${blizzard.client_secret}`
+        `${blizzard.clientId}:${blizzard.clientSecret}`
     ).toString("base64");
 
     const auth_response = await fetch(blizzard.authTokenUrl, {
