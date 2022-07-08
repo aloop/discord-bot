@@ -23,6 +23,10 @@ export async function startHTTPServer() {
         handlers.tokenChart("months", (period) => period >= 1 && period <= 12)
     );
 
+    webserver.set_not_found_handler((request, response) => {
+        response.status(404).send("404: Page Not Found");
+    });
+
     try {
         await webserver.listen(
             config.http?.listenPort ?? 5000,
