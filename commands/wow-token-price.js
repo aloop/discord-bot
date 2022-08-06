@@ -1,5 +1,4 @@
-import { SlashCommandBuilder } from "@discordjs/builders";
-import { MessageEmbed } from "discord.js";
+import { SlashCommandBuilder, EmbedBuilder } from "discord.js";
 
 import { getLatest } from "../models/wow-token-price.js";
 import loadConfig from "../utils/config.js";
@@ -60,15 +59,20 @@ export async function execute(interaction) {
         const { period, unit } =
             options !== null ? JSON.parse(options) : defaultOptions;
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle("World of Warcraft Token Price")
-            .addField("Current Price", `**${price.toLocaleString()}** gold`)
-            .addField(
-                "Next Update",
-                `In approximately **${updateTime}** ${
-                    updateTime === 1 ? "minute" : "minutes"
-                }`
-            )
+            .addFields([
+                {
+                    name: "Current Price",
+                    value: `**${price.toLocaleString()}** gold`,
+                },
+                {
+                    name: "Next Update",
+                    value: `In approximately **${updateTime}** ${
+                        updateTime === 1 ? "minute" : "minutes"
+                    }`,
+                },
+            ])
             .setImage(
                 `${config.http.host}/wow-token/chart/${unit}/${period}?t=${updatedAt}`
             );

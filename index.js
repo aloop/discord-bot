@@ -2,7 +2,12 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { Client, Collection, Intents } from "discord.js";
+import {
+    Client,
+    Collection,
+    GatewayIntentBits,
+    InteractionType,
+} from "discord.js";
 
 import loadConfig from "./utils/config.js";
 
@@ -27,7 +32,7 @@ for (const file of cronTasks) {
     await cronTask?.start?.();
 }
 
-const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
+const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
 client.commands = new Collection();
 const commandsPath = path.join(
@@ -51,7 +56,7 @@ client.once("ready", () => {
 });
 
 client.on("interactionCreate", async (interaction) => {
-    if (!interaction.isCommand()) return;
+    if (interaction.type !== InteractionType.ApplicationCommand) return;
 
     const command = client.commands.get(interaction.commandName);
 
