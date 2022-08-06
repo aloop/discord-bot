@@ -1,7 +1,8 @@
 import { SlashCommandBuilder, EmbedBuilder } from "discord.js";
 
-import { getLatest } from "../models/wow-token-price.js";
+import { getAllSince } from "../models/wow-token-price.js";
 import loadConfig from "../utils/config.js";
+import singularize from "../utils/singularize.js";
 const config = await loadConfig();
 
 export const data = new SlashCommandBuilder()
@@ -44,7 +45,12 @@ const defaultOptions = Object.freeze({
 
 export async function execute(interaction) {
     try {
-        const { price, updatedAt } = await getLatest();
+        const options = interaction.options.getString("chart");
+        const { period, unit } =
+            options !== null ? JSON.parse(options) : defaultOptions;
+
+        const history = await getAllSince(period, unit);
+        const [{ price, updatedAt }] = history;
 
         // I'm pretty sure the token price is only updated every 20 minutes,
         // so we'll do some math and figure out how much time we have until the
@@ -55,9 +61,18 @@ export async function execute(interaction) {
             1
         );
 
-        const options = interaction.options.getString("chart");
-        const { period, unit } =
-            options !== null ? JSON.parse(options) : defaultOptions;
+        let highestPrice = -Infinity;
+        let lowestPrice = Infinity;
+
+        for (const { price: historicPrice } of history) {
+            if (historicPrice > highestPrice) {
+                highestPrice = historicPrice;
+            }
+
+            if (historicPrice < lowestPrice) {
+                lowestPrice = historicPrice;
+            }
+        }
 
         const embed = new EmbedBuilder()
             .setTitle("World of Warcraft Token Price")
@@ -65,6 +80,17 @@ export async function execute(interaction) {
                 {
                     name: "Current Price",
                     value: `**${price.toLocaleString()}** gold`,
+                },
+                {
+                    name: `${period} ${singularize(unit)} High`,
+                    value: `**${highestPrice.toLocaleString()}** gold`,
+                    inline: true,
+                },
+
+                {
+                    name: `${period} ${singularize(unit)} Low`,
+                    value: `**${lowestPrice.toLocaleString()}** gold`,
+                    inline: true,
                 },
                 {
                     name: "Next Update",
