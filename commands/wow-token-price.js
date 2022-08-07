@@ -79,17 +79,17 @@ export async function execute(interaction) {
             .addFields([
                 {
                     name: "Current Price",
-                    value: `**${price.toLocaleString()}** gold`,
+                    value: `${price.toLocaleString()} gold`,
                 },
                 {
                     name: `${period} ${singularize(unit)} High`,
-                    value: `**${highestPrice.toLocaleString()}** gold`,
+                    value: `${highestPrice.toLocaleString()} gold`,
                     inline: true,
                 },
 
                 {
                     name: `${period} ${singularize(unit)} Low`,
-                    value: `**${lowestPrice.toLocaleString()}** gold`,
+                    value: `${lowestPrice.toLocaleString()} gold`,
                     inline: true,
                 },
                 {
