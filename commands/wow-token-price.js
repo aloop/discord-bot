@@ -82,13 +82,13 @@ export async function execute(interaction) {
                     value: `${price.toLocaleString()} gold`,
                 },
                 {
-                    name: `${period} ${singularize(unit)} High`,
+                    name: `${period}-${singularize(unit)} High`,
                     value: `${highestPrice.toLocaleString()} gold`,
                     inline: true,
                 },
 
                 {
-                    name: `${period} ${singularize(unit)} Low`,
+                    name: `${period}-${singularize(unit)} Low`,
                     value: `${lowestPrice.toLocaleString()} gold`,
                     inline: true,
                 },
