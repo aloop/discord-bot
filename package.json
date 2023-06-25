@@ -16,15 +16,17 @@
     "author": "Anthony Loop",
     "license": "MIT",
     "dependencies": {
-        "@discordjs/rest": "^1.0.1",
+        "@discordjs/rest": "^1.7.1",
+        "bufferutil": "^4.0.7",
         "chart.js": "^3.9.1",
-        "chartjs-adapter-date-fns": "^2.0.0",
+        "chartjs-adapter-date-fns": "^2.0.1",
         "chartjs-node-canvas": "^4.1.6",
-        "date-fns": "^2.29.1",
-        "discord-api-types": "^0.37.1",
-        "discord.js": "^14.1.2",
-        "hyper-express": "^6.4.5",
-        "sqlite": "^4.1.2",
-        "sqlite3": "^5.0.11"
+        "date-fns": "^2.30.0",
+        "discord-api-types": "^0.37.46",
+        "discord.js": "^14.11.0",
+        "hyper-express": "^6.7.1",
+        "sqlite": "^4.2.1",
+        "sqlite3": "^5.1.6",
+        "utf-8-validate": "^6.0.3"
     }
 }

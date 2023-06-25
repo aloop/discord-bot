@@ -1,8 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { REST } from "@discordjs/rest";
-import { Routes } from "discord-api-types/v9";
+import { REST, Routes } from "discord.js";
 
 import loadConfig from "./utils/config.js";
 
@@ -25,14 +24,17 @@ for (const file of commandFiles) {
     commands.push(command.data.toJSON());
 }
 
-const rest = new REST({ version: "9" }).setToken(token);
+const rest = new REST({ version: "10" }).setToken(token);
 
-rest.put(Routes.applicationGuildCommands(clientId, guildId), { body: commands })
-    .then(() => {
-        const commandNames = commands.map(({ name }) => name);
-        console.log(
-            "Successfully registered application commands:",
-            commandNames.join(", ")
-        );
-    })
-    .catch(console.error);
+try {
+    await rest.put(Routes.applicationCommands(clientId), { body: commands });
+
+    const commandNames = commands.map(({ name }) => name);
+    console.log(
+        "Successfully registered application commands:",
+        commandNames.join(", ")
+    );
+} catch (error) {
+    console.error(error);
+    process.exit(1)
+}
