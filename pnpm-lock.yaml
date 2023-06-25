@@ -5,9 +5,6 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
-  '@discordjs/rest':
-    specifier: ^1.7.1
-    version: 1.7.1
   bufferutil:
     specifier: ^4.0.7
     version: 4.0.7
@@ -23,9 +20,6 @@ dependencies:
   date-fns:
     specifier: ^2.30.0
     version: 2.30.0
-  discord-api-types:
-    specifier: ^0.37.46
-    version: 0.37.46
   discord.js:
     specifier: ^14.11.0
     version: 14.11.0(bufferutil@4.0.7)(utf-8-validate@6.0.3)
