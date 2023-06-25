@@ -1,8 +1,8 @@
 import { SlashCommandBuilder, EmbedBuilder } from "discord.js";
 
-import { getAllSince } from "../models/wow-token-price.js";
-import loadConfig from "../utils/config.js";
-import singularize from "../utils/singularize.js";
+import { getAllSince } from "../../models/wow-token-price.js";
+import loadConfig from "../../utils/config.js";
+import singularize from "../../utils/singularize.js";
 const config = await loadConfig();
 
 export const data = new SlashCommandBuilder()

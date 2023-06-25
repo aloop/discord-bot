@@ -2,12 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-import {
-    Client,
-    Collection,
-    GatewayIntentBits,
-    InteractionType,
-} from "discord.js";
+import { Client, Collection, Events, GatewayIntentBits } from "discord.js";
 
 import loadConfig from "./utils/config.js";
 
@@ -16,6 +11,10 @@ const {
 } = await loadConfig();
 
 import { startHTTPServer } from "./http/server.js";
+
+/*
+    Setup Scheduled Tasks
+*/
 
 const cronTasksPath = path.join(
     path.dirname(fileURLToPath(import.meta.url)),
@@ -32,48 +31,86 @@ for (const file of cronTasks) {
     await cronTask?.start?.();
 }
 
+/*
+    Setup Client and Register Client Commands
+*/
+
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
 client.commands = new Collection();
-const commandsPath = path.join(
+
+const commandFoldersPath = path.join(
     path.dirname(fileURLToPath(import.meta.url)),
     "commands"
 );
-const commandFiles = fs
-    .readdirSync(commandsPath)
-    .filter((file) => file.endsWith(".js"));
 
-for (const file of commandFiles) {
-    const filePath = path.join(commandsPath, file);
-    const command = await import(filePath);
-    // Set a new item in the Collection
-    // With the key as the command name and the value as the exported module
-    client.commands.set(command.data.name, command);
+const commandFolders = fs.readdirSync(commandFoldersPath);
+
+for (const folder of commandFolders) {
+    const commandsPath = path.join(commandFoldersPath, folder);
+    const commandFiles = fs
+        .readdirSync(commandsPath)
+        .filter((file) => file.endsWith(".js"));
+
+    for (const file of commandFiles) {
+        const filePath = path.join(commandsPath, file);
+        const command = await import(filePath);
+        // Set a new item in the Collection
+        // With the key as the command name and the value as the exported module
+        if ("data" in command && "execute" in command) {
+            client.commands.set(command.data.name, command);
+        } else {
+            console.warn(
+                `[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`
+            );
+        }
+    }
 }
 
-client.once("ready", () => {
-    console.log("Discord.js Ready");
+/*
+    Setup Client Event Handlers
+*/
+
+client.once(Events.ClientReady, (c) => {
+    console.log(`Discord.js Ready! Logged in as ${c.user.tag}`);
 });
 
-client.on("interactionCreate", async (interaction) => {
-    if (interaction.type !== InteractionType.ApplicationCommand) return;
+client.on(Events.InteractionCreate, async (interaction) => {
+    if (!interaction.isChatInputCommand()) {
+        return;
+    }
 
-    const command = client.commands.get(interaction.commandName);
+    const command = interaction.client.commands.get(interaction.commandName);
 
-    if (!command) return;
+    if (!command) {
+        console.error(
+            `No command matching ${interaction.commandName} was found.`
+        );
+        return;
+    }
 
     try {
         await command.execute(interaction);
     } catch (error) {
         console.error(error);
-        await interaction.reply({
-            content: "There was an error while executing this command!",
-            ephemeral: true,
-        });
+        if (interaction.replied || interaction.deferred) {
+            await interaction.followUp({
+                content: "There was an error while executing this command!",
+                ephemeral: true,
+            });
+        } else {
+            await interaction.reply({
+                content: "There was an error while executing this command!",
+                ephemeral: true,
+            });
+        }
     }
 });
 
-client.login(token);
+/*
+    Login and start up the HTTP server
+*/
 
-// Start HTTP server
-startHTTPServer();
+await client.login(token);
+
+await startHTTPServer();
