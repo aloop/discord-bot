@@ -18,12 +18,7 @@ Environment="HOME=%S/discord-bot/home"
 
 LoadCredential=config.json:/srv/node/discord-bot/config.json
 
-ExecStartPre=ln -sf /srv/node/discord-bot/package.json %S/discord-bot/package.json
-ExecStartPre=ln -sf /srv/node/discord-bot/pnpm-lock.yaml %S/discord-bot/pnpm-lock.yaml
-
-ExecStartPre=pnpm install -C "%S/discord-bot/" --prod --frozen-lockfile
-ExecStartPre=+/usr/bin/ln -sf %S/discord-bot/node_modules /srv/node/discord-bot/
-ExecStart=pnpm run serve
+ExecStart=node .
 
 Restart=on-abnormal
 

@@ -22,13 +22,16 @@ You may want to set `listenHost` to 0.0.0.0 in your `config.json` so that the HT
 
 ### systemd
 
-The service is setup to run `pnpm install --prod --frozen-lockfile` before the server is started.
-
-Note that if you have changed the listenPort in config.json from the default of 5000 you will need to change `SocketBindAllow=tcp:5000` in `discord-bot.service` to reflect that change
+Note that if you have changed the listenPort in config.json from the default of 5000 you will need to change `SocketBindAllow=tcp:5000` in the systemd service file to reflect that change.
 
 ```sh
 sudo cp systemd/discord-bot.service /etc/systemd/system/
 sudo systemctl daemon-reload
+# Don't forget to run this every time the lockfile updates!
+pnpm install --prod --frozen-lockfile
+# deploy-commands also needs to be run whenever a command is either added or
+# it's interface updated
+pnpm run deploy-commands
 sudo systemctl start discord-bot
 ```
 
