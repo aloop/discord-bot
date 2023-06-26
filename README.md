@@ -28,7 +28,6 @@ Note that if you have changed the listenPort in config.json from the default of 
 
 ```sh
 cp -P node_modules.systemd node_modules
-sudo cp systemd/discord-bot.service /etc/systemd/system/
 sudo systemctl daemon-reload
 sudo systemctl start discord-bot
 ```

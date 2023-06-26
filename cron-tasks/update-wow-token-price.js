@@ -3,7 +3,7 @@ import { fetchLatest } from "../models/wow-token-price.js";
 let intervalId = null;
 
 export function stop() {
-    if (invervalId !== null) {
+    if (intervalId !== null) {
         clearInterval(intervalId);
     }
 }
@@ -22,3 +22,6 @@ export async function start() {
         }, intervalLength);
     }
 }
+
+process.on("SIGINT", stop);
+process.on("SIGTERM", stop);

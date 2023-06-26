@@ -34,6 +34,10 @@ export async function startHTTPServer() {
         );
 
         console.log("HTTP server started");
+
+        return function stopServer() {
+            webserver.close();
+        };
     } catch (err) {
         const port = config.http?.listenPort ?? 5000;
         console.error(`Failed to start webserver on port ${port}`, err);

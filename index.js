@@ -113,4 +113,13 @@ client.on(Events.InteractionCreate, async (interaction) => {
 
 await client.login(token);
 
-await startHTTPServer();
+const stopHTTPServer = await startHTTPServer();
+
+const startGracefulShutdown = (signal) => {
+    console.log(`Received ${signal}, shutting down...`);
+    client.destroy();
+    stopHTTPServer();
+};
+
+process.on("SIGTERM", () => startGracefulShutdown("SIGTERM"));
+process.on("SIGINT", () => startGracefulShutdown("SIGINT"));

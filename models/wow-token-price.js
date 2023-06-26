@@ -12,6 +12,13 @@ const db = await open({
     driver: sqlite3.cached.Database,
 });
 
+const closeDB = async () => {
+    await db.close();
+};
+
+process.on("SIGINT", closeDB);
+process.on("SIGTERM", closeDB);
+
 await db.migrate();
 
 const getLatestQuery = `SELECT * FROM token_prices ORDER BY id DESC`;

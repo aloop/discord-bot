@@ -1,5 +1,6 @@
 [Unit]
 Description=A Simple Discord Bot
+Documentation=https://github.com/aloop/discord-bot
 After=network.target network-online.target
 AssertPathExists=/srv/node/discord-bot/config.json
 
@@ -7,46 +8,66 @@ AssertPathExists=/srv/node/discord-bot/config.json
 DynamicUser=true
 RestartSec=5s
 Type=simple
+
+UMask=0027
+
 WorkingDirectory=/srv/node/discord-bot
+
 Environment="NODE_ENV=production"
 Environment="HOME=%S/discord-bot/home"
+
 LoadCredential=config.json:/srv/node/discord-bot/config.json
+
 ExecStartPre=ln -sf /srv/node/discord-bot/package.json %S/discord-bot/package.json
 ExecStartPre=ln -sf /srv/node/discord-bot/pnpm-lock.yaml %S/discord-bot/pnpm-lock.yaml
-ExecStartPre=pnpm install -C "%S/discord-bot/" --prod --frozen-lockfile
-ExecStart=pnpm run serve
-Restart=always
 
-NoNewPrivileges=yes
+ExecStartPre=pnpm install -C "%S/discord-bot/" --prod --frozen-lockfile
+ExecStartPre=+/usr/bin/ln -sf %S/discord-bot/node_modules /srv/node/discord-bot/
+ExecStart=pnpm run serve
+
+Restart=on-abnormal
+
+DevicePolicy=closed
+MemoryAccounting=yes
+#MemoryDenyWriteExecute=yes # Node doesn't like this!
+ProcSubset=pid
+RemoveIPC=yes
 PrivateTmp=yes
 PrivateDevices=yes
-ProtectHome=tmpfs
-ProtectSystem=strict
-ProtectKernelTunables=yes
-ProtectKernelModules=yes
-ProtectKernelLogs=yes
-ProtectControlGroups=yes
-ProtectHostname=yes
+PrivateUsers=yes
+PrivateMounts=yes
 ProtectClock=yes
+ProtectHome=yes
+ProtectSystem=strict
+ProtectKernelLogs=yes
+ProtectKernelModules=yes
+ProtectKernelTunables=yes
+ProtectControlGroups=yes
+ProtectProc=invisible
+ProtectHostname=yes
 RestrictNamespaces=yes
 RestrictRealtime=yes
-RestrictAddressFamilies=AF_INET AF_INET6
 RestrictSUIDSGID=yes
-SystemCallArchitectures=native
 
+SystemCallArchitectures=native
 SystemCallFilter=@system-service
 SystemCallErrorNumber=EPERM
 
+RestrictAddressFamilies=AF_INET AF_INET6
+SocketBindDeny=any
+SocketBindAllow=tcp:5000
+
 StateDirectory=discord-bot
+StateDirectoryMode=0750
+
 RuntimeDirectory=discord-bot
+RuntimeDirectoryMode=0750
+
 CacheDirectory=discord-bot
 CacheDirectoryMode=0750
 
 CapabilityBoundingSet=
 AmbientCapabilities=
-
-SocketBindDeny=any
-SocketBindAllow=tcp:5000
 
 TemporaryFileSystem=/srv:ro
 BindPaths=/srv/node/discord-bot/
