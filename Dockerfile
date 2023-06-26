@@ -1,6 +1,4 @@
-FROM node:18-alpine as build
-
-WORKDIR /app
+FROM node:18-alpine AS base-install
 
 RUN apk --no-cache add \
     ca-certificates \
@@ -15,19 +13,21 @@ RUN apk --no-cache add \
 
 RUN npm install -g pnpm
 
+# Begin stage 2
+
+FROM base-install AS install-packages
+
+WORKDIR /app
+
 COPY package.json ./
 COPY pnpm-lock.yaml ./
-
-RUN pnpm config set store-dir /pnpm
 
 ENV NODE_ENV=production
 RUN pnpm install --prod --frozen-lockfile
 
-# Begin stage 2
+# Begin stage 3
 
-FROM node:18-alpine
-
-WORKDIR /app
+FROM node:18-alpine AS base
 
 RUN apk --no-cache add \
     ca-certificates \
@@ -37,14 +37,16 @@ RUN apk --no-cache add \
     giflib \
     libjpeg
 
-RUN npm install -g pnpm
-RUN pnpm config set store-dir /pnpm
+# Begin stage 4 (final)
 
-COPY --from=build /pnpm /pnpm
-COPY --from=build /app ./
+FROM base AS bot
+
+WORKDIR /app
+
 COPY . .
+COPY --from=install-packages /app/node_modules ./node_modules
 
 EXPOSE 5000
 ENV NODE_ENV=production
-ENTRYPOINT ["pnpm"]
-CMD [ "run", "serve" ]
+ENTRYPOINT ["node"]
+CMD [ "." ]

@@ -14,7 +14,14 @@ Copy `docker-compose.example.yml` from this repository and alter it to your liki
 
 #### Docker Run
 
-`docker run --rm -d -p 127.0.0.1:5000:5000/tcp -v "$(pwd)/config.json:/app/config.json:ro" -v "$(pwd)/db:/app/db" aloop/discord-bot:latest`
+To deploy the bot commands, execute the following:
+```sh
+docker run --rm -it -v "$(pwd)/config.json:/app/config.json:ro" aloop/discord-bot:latest pnpm run deploy-commands
+```
+
+```sh
+docker run --rm -d -p 127.0.0.1:5000:5000/tcp -v "$(pwd)/config.json:/app/config.json:ro" -v "$(pwd)/db:/app/db" aloop/discord-bot:latest
+```
 
 #### Docker notes
 

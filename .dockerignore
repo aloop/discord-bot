@@ -1,9 +1,11 @@
 Dockerfile
 config.example.json
+config.json
 docker-compose.example.yml
+docker-compose.yml
 .git/
+.github/
 db/
 node_modules/
-node_modules.systemd
 .node-version
 README.md
