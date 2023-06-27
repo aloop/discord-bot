@@ -43,7 +43,11 @@ export async function getLatest() {
     // If there is no result, or the stored price is older than 20 minutes,
     // fetch the latest price from the blizzard api
     if (!result || new Date(result.updated_at + 20 * 60 * 1000) < Date.now()) {
-        return await fetchLatest();
+        const latestResult = await fetchLatest();
+
+        if (latestResult) {
+            return latestResult;
+        }
     }
 
     return {
@@ -77,7 +81,19 @@ export async function getAllSince(
 }
 
 export async function fetchLatest() {
-    const { updatedAt, price } = await fetchTokenPrice();
+    let tokenPriceData = null;
+
+    try {
+        tokenPriceData = await fetchTokenPrice();
+    } catch (e) {
+        console.error("Error fetching latest token price:", e);
+    }
+
+    if (tokenPriceData === null) {
+        return;
+    }
+
+    const { updatedAt, price } = tokenPriceData;
 
     try {
         await db.run(insertPriceQuery, {

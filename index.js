@@ -13,25 +13,6 @@ const {
 import { startHTTPServer } from "./http/server.js";
 
 /*
-    Setup Scheduled Tasks
-*/
-
-const cronTasksPath = path.join(
-    path.dirname(fileURLToPath(import.meta.url)),
-    "cron-tasks"
-);
-
-const cronTasks = fs
-    .readdirSync(cronTasksPath)
-    .filter((file) => file.endsWith(".js"));
-
-for (const file of cronTasks) {
-    const filePath = path.join(cronTasksPath, file);
-    const cronTask = await import(filePath);
-    await cronTask?.start?.();
-}
-
-/*
     Setup Client and Register Client Commands
 */
 
@@ -108,12 +89,11 @@ client.on(Events.InteractionCreate, async (interaction) => {
 });
 
 /*
-    Login and start up the HTTP server
+    Start up the HTTP server and Login to Discord
 */
+const stopHTTPServer = await startHTTPServer();
 
 await client.login(token);
-
-const stopHTTPServer = await startHTTPServer();
 
 const startGracefulShutdown = (signal) => {
     console.log(`Received ${signal}, shutting down...`);
@@ -123,3 +103,22 @@ const startGracefulShutdown = (signal) => {
 
 process.on("SIGTERM", () => startGracefulShutdown("SIGTERM"));
 process.on("SIGINT", () => startGracefulShutdown("SIGINT"));
+
+/*
+    Setup Scheduled Tasks
+*/
+
+const cronTasksPath = path.join(
+    path.dirname(fileURLToPath(import.meta.url)),
+    "cron-tasks"
+);
+
+const cronTasks = fs
+    .readdirSync(cronTasksPath)
+    .filter((file) => file.endsWith(".js"));
+
+for (const file of cronTasks) {
+    const filePath = path.join(cronTasksPath, file);
+    const cronTask = await import(filePath);
+    await cronTask?.start?.();
+}
