@@ -31,5 +31,4 @@ COPY --from=install-packages /app/node_modules ./node_modules
 
 EXPOSE 5000
 ENV NODE_ENV=production
-ENTRYPOINT ["node"]
-CMD [ "." ]
+CMD [ "node" "index.js" ]
