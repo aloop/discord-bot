@@ -12,7 +12,7 @@
     },
     "http": {
         "host": "https://example.com",
-        "listenHost": "localhost",
+        "listenHost": "127.0.0.1",
         "listenPort": 5000
     }
 }

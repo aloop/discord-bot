@@ -1,23 +1,8 @@
-FROM node:18-alpine AS base-install
-
-RUN apk --no-cache add \
-    ca-certificates \
-    make \
-    g++ \
-    python3 \
-    pkgconfig \
-    cairo-dev \
-    pango-dev \
-    giflib-dev \
-    jpeg-dev
-
-RUN npm install -g pnpm
-
-# Begin stage 2
-
-FROM base-install AS install-packages
+FROM node:20 AS install-packages
 
 WORKDIR /app
+
+RUN npm install -g pnpm
 
 COPY package.json ./
 COPY pnpm-lock.yaml ./
@@ -25,21 +10,19 @@ COPY pnpm-lock.yaml ./
 ENV NODE_ENV=production
 RUN pnpm install --prod --frozen-lockfile
 
-# Begin stage 3
+# Begin stage 2
 
-FROM node:18-alpine AS base
+FROM node:20 AS base
 
-RUN apk --no-cache add \
-    ca-certificates \
-    ttf-inconsolata ttf-dejavu \
-    cairo \
-    pango \
-    giflib \
-    libjpeg
+RUN apt-get update && apt-get install -y \
+   ca-certificates \
+   fonts-inconsolata \
+   fonts-dejavu \
+&& rm -rf /var/lib/apt/lists/*
 
-# Begin stage 4 (final)
+# Begin stage 3 (final)
 
-FROM base AS bot
+FROM base AS discord-bot
 
 WORKDIR /app
 
