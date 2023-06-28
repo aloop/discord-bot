@@ -1,7 +1,7 @@
 [Unit]
 Description=A Simple Discord Bot
 Documentation=https://github.com/aloop/discord-bot
-After=network.target network-online.target
+After=network.target network-online.target nss-lookup.target
 AssertPathExists=/srv/node/discord-bot/config.json
 
 [Service]
