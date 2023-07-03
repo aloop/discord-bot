@@ -6,7 +6,7 @@ AssertPathExists=/srv/node/discord-bot/config.json
 
 [Service]
 DynamicUser=true
-RestartSec=5s
+RestartSec=10s
 Type=simple
 
 UMask=0027
@@ -20,7 +20,7 @@ LoadCredential=config.json:/srv/node/discord-bot/config.json
 
 ExecStart=node .
 
-Restart=on-abnormal
+Restart=on-failure
 
 DevicePolicy=closed
 MemoryAccounting=yes
