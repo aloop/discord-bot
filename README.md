@@ -40,7 +40,7 @@ sudo systemctl daemon-reload
 # Don't forget to run this every time the lockfile updates!
 pnpm install --prod --frozen-lockfile
 # deploy-commands also needs to be run whenever a command is either added or
-# it's interface updated
+# has had its interface updated
 pnpm run deploy-commands
 sudo systemctl start discord-bot
 ```
