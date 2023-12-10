@@ -11,19 +11,20 @@
     "scripts": {
         "deploy-commands": "node deploy-commands.js",
         "serve": "node deploy-commands.js && node index.js",
+        "test-serve": "node index.js",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "author": "Anthony Loop",
     "license": "MIT",
     "dependencies": {
-        "bufferutil": "^4.0.7",
-        "chart.js": "^3.9.1",
-        "chartjs-adapter-date-fns": "^2.0.1",
-        "chartjs-node-canvas": "^4.1.6",
+        "bufferutil": "^4.0.8",
+        "canvas": "^2.11.2",
+        "chart.js": "^4.4.1",
+        "chartjs-adapter-date-fns": "^3.0.0",
         "date-fns": "^2.30.0",
-        "discord.js": "^14.11.0",
-        "hyper-express": "^6.7.1",
-        "sqlite": "^4.2.1",
+        "discord.js": "^14.14.1",
+        "hyper-express": "^6.14.3",
+        "sqlite": "^5.1.1",
         "sqlite3": "^5.1.6",
         "utf-8-validate": "^6.0.3"
     }
