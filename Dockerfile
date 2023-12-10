@@ -1,34 +1,29 @@
-FROM node:20 AS install-packages
+# Stage 1: install node packages
+FROM node:20-bookworm AS node-modules
 
 WORKDIR /app
 
 RUN npm install -g pnpm
 
-COPY package.json ./
-COPY pnpm-lock.yaml ./
+COPY package*.json .
+COPY pnpm-lock.yaml .
 
 ENV NODE_ENV=production
 RUN pnpm install --prod --frozen-lockfile
 
-# Begin stage 2
+# Stage 2: install apt packages and setup run command
 
-FROM node:20 AS base
+FROM node:20-bookworm-slim
 
-RUN apt-get update && apt-get install -y \
-   ca-certificates \
-   fonts-inconsolata \
-   fonts-dejavu \
-&& rm -rf /var/lib/apt/lists/*
+ENV NODE_ENV production
 
-# Begin stage 3 (final)
+RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates fonts-inconsolata fonts-dejavu dumb-init && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-FROM base AS discord-bot
-
+USER node
 WORKDIR /app
 
-COPY . .
-COPY --from=install-packages /app/node_modules ./node_modules
+COPY --chown=node:node . .
+COPY --chown=node:node --from=node-modules /app/node_modules ./node_modules
 
 EXPOSE 5000
-ENV NODE_ENV=production
-CMD [ "node", "index.js" ]
+CMD [ "dumb-init", "node", "index.js" ]
