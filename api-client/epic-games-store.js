@@ -2,7 +2,7 @@ const productBaseUrl = "https://www.epicgames.com/store/en-US/product/";
 const freeGamesApiUrl =
     "https://store-site-backend-static.ak.epicgames.com/freeGamesPromotions?locale=en-US&country=US&allowCountries=US";
 
-const isCurrentlyFree = (game) => {
+function isCurrentlyFree(game) {
     const currentDate = Date.now();
     const giveawayStart =
         game?.promotions?.promotionalOffers[0]?.promotionalOffers[0]?.startDate;
@@ -17,9 +17,9 @@ const isCurrentlyFree = (game) => {
     }
 
     return false;
-};
+}
 
-const getFormattedEndDate = (game) => {
+function getFormattedEndDate(game) {
     const giveawayEnd =
         game?.promotions?.promotionalOffers[0]?.promotionalOffers[0]?.endDate;
 
@@ -32,7 +32,35 @@ const getFormattedEndDate = (game) => {
     }
 
     return null;
-};
+}
+
+function selectFreeGames(game) {
+    return (
+        // Check for a discounted price of $0
+        game?.price?.totalPrice?.discountPrice === 0 &&
+        // Make sure it has "promotional offers"
+        game?.promotions?.promotionalOffers?.length > 0 &&
+        // Make sure it's actually free
+        isCurrentlyFree(game)
+    );
+}
+
+function formatGameData(game) {
+    return {
+        title: game.title,
+        description: game.description,
+        id: game.id,
+        url: new URL(`${game?.productSlug}`, productBaseUrl).href,
+        thumbnailUrl:
+            game?.keyImages?.find(
+                (img) => img?.type?.toLowerCase() === "thumbnail"
+            )?.url ?? game?.keyImages[0]?.url,
+        freeUntil: getFormattedEndDate(game),
+        endDate:
+            game?.promotions?.promotionalOffers[0]?.promotionalOffers[0]
+                ?.endDate,
+    };
+}
 
 export async function fetchFreeGames() {
     const response = await fetch(freeGamesApiUrl);
@@ -45,32 +73,9 @@ export async function fetchFreeGames() {
 
     const result = await response.json();
 
-    if (result?.data?.Catalog?.searchStore?.elements) {
-        const elements = result.data.Catalog.searchStore.elements;
+    const elements = result?.data?.Catalog?.searchStore?.elements;
 
-        return elements
-            .filter(
-                (game) =>
-                    // Check for a discounted price of $0
-                    game?.price?.totalPrice?.discountPrice === 0 &&
-                    // Make sure it has "promotional offers"
-                    game?.promotions?.promotionalOffers?.length > 0 &&
-                    // Make sure it's actually free
-                    isCurrentlyFree(game)
-            )
-            .map((game) => ({
-                title: game.title,
-                description: game.description,
-                id: game.id,
-                url: new URL(`${game?.productSlug}`, productBaseUrl).href,
-                thumbnailUrl:
-                    game?.keyImages?.find(
-                        (img) => img?.type?.toLowerCase() === "thumbnail"
-                    )?.url ?? game?.keyImages[0]?.url,
-                freeUntil: getFormattedEndDate(game),
-                endDate:
-                    game?.promotions?.promotionalOffers[0]?.promotionalOffers[0]
-                        ?.endDate,
-            }));
+    if (elements) {
+        return elements.filter(selectFreeGames).map(formatGameData);
     }
 }

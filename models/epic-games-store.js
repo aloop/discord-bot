@@ -4,7 +4,7 @@ import { fetchFreeGames } from "../api-client/epic-games-store.js";
 const pickGameId = (game) => game.id;
 
 export async function fetchNewGames() {
-    let freeGames = null;
+    let freeGames = [];
 
     try {
         freeGames = await fetchFreeGames();
@@ -13,10 +13,6 @@ export async function fetchNewGames() {
             "Error fetching free games from the Epic Games Store:",
             err
         );
-    }
-
-    if (freeGames === null) {
-        return;
     }
 
     const currentDate = Date.now();

@@ -12,9 +12,9 @@ const db = await open({
     driver: sqlite3.cached.Database,
 });
 
-const closeDB = async () => {
+async function closeDB() {
     await db.close();
-};
+}
 
 process.on("SIGINT", closeDB);
 process.on("SIGTERM", closeDB);
@@ -32,10 +32,12 @@ const insertPriceQuery = `
         (:updated_at,:price);
 `;
 
-const formatResult = ({ updated_at, price }) => ({
-    updatedAt: updated_at,
-    price,
-});
+function formatResult({ updated_at, price }) {
+    return {
+        updatedAt: updated_at,
+        price,
+    };
+}
 
 export async function getLatest() {
     const result = await db.get(getLatestQuery);

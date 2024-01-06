@@ -7,7 +7,7 @@ const {
     channels: { deals },
 } = await loadConfig();
 
-const postNewDeals = (client, games) => {
+function postNewDeals(client, games) {
     if (games.length > 0) {
         try {
             const channel = client.channels.cache.get(deals);
@@ -40,7 +40,7 @@ const postNewDeals = (client, games) => {
             console.error(err);
         }
     }
-};
+}
 
 // 2 hours in milliseconds
 const intervalLength = 2 * 60 * 60 * 1000;
