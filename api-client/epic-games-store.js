@@ -1,6 +1,17 @@
-const productBaseUrl = "https://www.epicgames.com/store/en-US/product/";
+import loadConfig from "../utils/config.js";
+
+const { settings = {}, epicGamesStore = {} } = await loadConfig();
+
+const timeZone = settings?.timeZone || "America/Los_Angeles";
+const locale = settings?.locale || "en-US";
+const country = settings?.country || "US";
+
+const productBaseUrl =
+    epicGamesStore?.productBaseUrl ||
+    `https://www.epicgames.com/store/${locale}/product/`;
 const freeGamesApiUrl =
-    "https://store-site-backend-static.ak.epicgames.com/freeGamesPromotions?locale=en-US&country=US&allowCountries=US";
+    epicGamesStore?.freeGamesApiUrl ||
+    `https://store-site-backend-static.ak.epicgames.com/freeGamesPromotions?locale=${locale}&country=${country}&allowCountries=${country}`;
 
 function isCurrentlyFree(game) {
     const currentDate = Date.now();
@@ -24,8 +35,8 @@ function getFormattedEndDate(game) {
         game?.promotions?.promotionalOffers[0]?.promotionalOffers[0]?.endDate;
 
     if (giveawayEnd !== null) {
-        return new Date(giveawayEnd).toLocaleString("en-US", {
-            timeZone: "America/Los_Angeles",
+        return new Date(giveawayEnd).toLocaleString(locale, {
+            timeZone,
             dateStyle: "full",
             timeStyle: "long",
         });
@@ -67,7 +78,7 @@ export async function fetchFreeGames() {
 
     if (!response.ok) {
         throw new Error(
-            `Could not obtain Token Price, server responded with: ${response}`
+            `Error while fetching free Epic Games Store games, server responded with: ${response}`
         );
     }
 

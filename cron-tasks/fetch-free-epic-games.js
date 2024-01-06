@@ -3,12 +3,10 @@ import { EmbedBuilder } from "discord.js";
 import { fetchNewGames } from "../models/epic-games-store.js";
 import loadConfig from "../utils/config.js";
 
-const {
-    channels: { deals },
-} = await loadConfig();
+const { channels: { deals = false } = {} } = await loadConfig();
 
 function postNewDeals(client, games) {
-    if (games.length > 0) {
+    if (games.length > 0 && deals) {
         try {
             const channel = client.channels.cache.get(deals);
 
