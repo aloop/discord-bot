@@ -120,5 +120,5 @@ const cronTasks = fs
 for (const file of cronTasks) {
     const filePath = path.join(cronTasksPath, file);
     const cronTask = await import(filePath);
-    await cronTask?.start?.();
+    await cronTask?.start?.(client);
 }

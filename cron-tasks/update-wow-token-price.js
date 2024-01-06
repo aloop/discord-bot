@@ -9,7 +9,7 @@ export function stop() {
 }
 
 // 15 minutes in milliseconds
-const intervalLength = 15 * 1000 * 60;
+const intervalLength = 15 * 60 * 1000;
 
 export async function start() {
     if (!intervalId) {
