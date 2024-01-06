@@ -1,4 +1,4 @@
-import fs from "node:fs";
+import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { REST, Routes } from "discord.js";
@@ -16,13 +16,13 @@ const commandFoldersPath = path.join(
     "commands"
 );
 
-const commandFolders = fs.readdirSync(commandFoldersPath);
+const commandFolders = await fs.readdir(commandFoldersPath);
 
 for (const folder of commandFolders) {
     const commandsPath = path.join(commandFoldersPath, folder);
-    const commandFiles = fs
-        .readdirSync(commandsPath)
-        .filter((file) => file.endsWith(".js"));
+    const commandFiles = (await fs.readdir(commandsPath)).filter((file) =>
+        file.endsWith(".js")
+    );
 
     for (const file of commandFiles) {
         const filePath = path.join(commandsPath, file);
