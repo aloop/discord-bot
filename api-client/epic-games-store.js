@@ -45,6 +45,29 @@ function getFormattedEndDate(game) {
     return null;
 }
 
+function pickSlug(mapping) {
+    return mapping?.pageType?.toLowerCase?.() === "producthome";
+}
+
+function formatUrlFromSlug(slug) {
+    return slug ? new URL(slug, productBaseUrl).href : null;
+}
+
+function getUrl(game) {
+    if (game?.productSlug ?? false) {
+        return formatUrlFromSlug(game.productSlug);
+    } else if (
+        game?.catalogNs?.mappings?.length > 0 &&
+        Array.isArray(game.catalogNs.mappings)
+    ) {
+        return formatUrlFromSlug(
+            game.catalogNs.mappings.find(pickSlug)?.pageSlug
+        );
+    }
+
+    return null;
+}
+
 function selectFreeGames(game) {
     return (
         // Check for a discounted price of $0
@@ -61,7 +84,7 @@ function formatGameData(game) {
         title: game.title,
         description: game.description,
         id: game.id,
-        url: new URL(`${game?.productSlug}`, productBaseUrl).href,
+        url: getUrl(game),
         thumbnailUrl:
             game?.keyImages?.find(
                 (img) => img?.type?.toLowerCase() === "thumbnail"
