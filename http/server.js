@@ -2,7 +2,7 @@ import HyperExpress from "hyper-express";
 
 import * as handlers from "./handlers.js";
 
-import loadConfig from "../utils/config.js";
+import loadConfig from "../utils/load-config.js";
 const config = await loadConfig();
 
 const webserver = new HyperExpress.Server();

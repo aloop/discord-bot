@@ -1,4 +1,4 @@
-import loadConfig from "../utils/config.js";
+import loadConfig from "../utils/load-config.js";
 
 const { settings = {}, epicGamesStore = {} } = await loadConfig();
 

@@ -4,11 +4,11 @@ import { fileURLToPath } from "node:url";
 
 import { Client, Collection, Events, GatewayIntentBits } from "discord.js";
 
-import loadConfig from "./utils/config.js";
+import loadSecrets from "./utils/load-secrets.js";
 
 const {
     discord: { token },
-} = await loadConfig();
+} = await loadSecrets();
 
 import { startHTTPServer } from "./http/server.js";
 

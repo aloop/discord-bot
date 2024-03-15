@@ -1,3 +1,6 @@
+import path from "node:path";
+import { cwd } from "node:process";
+
 import Store from "../utils/json-store.js";
 import { fetchFreeGames } from "../api-client/epic-games-store.js";
 
@@ -16,7 +19,12 @@ export async function fetchNewGames() {
     }
 
     const currentDate = Date.now();
-    const store = new Store("../db/epic-games-store-free-games.json");
+    const store = new Store(
+        path.join(
+            process.env.STATE_DIRECTORY ?? cwd(),
+            "epic-games-store-free-games.json"
+        )
+    );
     const currentGames = await store.read();
     const currentGameIds = currentGames.map(pickGameId);
 

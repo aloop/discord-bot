@@ -3,11 +3,11 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { REST, Routes } from "discord.js";
 
-import loadConfig from "./utils/config.js";
+import loadSecrets from "./utils/load-secrets.js";
 
 const {
     discord: { clientId, token },
-} = await loadConfig();
+} = await loadSecrets();
 
 const commands = [];
 

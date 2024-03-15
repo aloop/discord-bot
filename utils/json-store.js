@@ -4,10 +4,7 @@ import { fileURLToPath } from "node:url";
 
 export default class JSONStore {
     constructor(filePath) {
-        this._path = path.join(
-            path.dirname(fileURLToPath(import.meta.url)),
-            filePath
-        );
+        this._path = filePath;
     }
 
     async read() {

@@ -1,14 +1,16 @@
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import { cwd } from "node:process";
 import sqlite3 from "sqlite3";
 import { open } from "sqlite";
 
 import { fetchTokenPrice } from "../api-client/blizzard.js";
 
 const db = await open({
-    // If STATE_DIRECTORY exists that should mean we were launched
-    // from the systemd service.
-    filename: `${
-        process.env.STATE_DIRECTORY ?? "./db"
-    }/wow-token-prices.sqlite`,
+    filename: path.join(
+        process.env.STATE_DIRECTORY ?? cwd(),
+        "wow-token-prices.sqlite"
+    ),
     driver: sqlite3.cached.Database,
 });
 
@@ -19,7 +21,9 @@ async function closeDB() {
 process.on("SIGINT", closeDB);
 process.on("SIGTERM", closeDB);
 
-await db.migrate();
+const currentDir = path.dirname(fileURLToPath(import.meta.url));
+
+await db.migrate({ migrationsPath: path.join(currentDir, "../migrations") });
 
 const getLatestQuery = `SELECT * FROM token_prices ORDER BY id DESC`;
 const getAllQuery = `SELECT * FROM token_prices ORDER BY id`;

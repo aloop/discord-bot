@@ -1,6 +1,8 @@
-import loadConfig from "../utils/config.js";
+import loadConfig from "../utils/load-config.js";
+import loadSecrets from "../utils/load-secrets.js";
 
 const { blizzard } = await loadConfig();
+const creds = await loadSecrets();
 
 let token = "";
 let tokenExpiresAt = 0;
@@ -10,14 +12,14 @@ async function fetchAuthToken() {
         return token;
     }
 
-    const credentials = Buffer.from(
-        `${blizzard.clientId}:${blizzard.clientSecret}`
+    const secrets = Buffer.from(
+        `${creds?.blizzard?.clientId}:${creds?.blizzard?.clientSecret}`
     ).toString("base64");
 
     const auth_response = await fetch(blizzard.authTokenUrl, {
         method: "POST",
         headers: {
-            Authorization: `Basic ${credentials}`,
+            Authorization: `Basic ${secrets}`,
         },
     });
 

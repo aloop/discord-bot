@@ -9,17 +9,7 @@
         "locale": "en-US",
         "country": "US"
     },
-    "discord": {
-        "clientId": "",
-        "guildId": "",
-        "token": ""
-    },
-    "channels": {
-        "deals": ""
-    },
     "blizzard": {
-        "clientId": "",
-        "clientSecret": "",
         "authTokenUrl": "https://us.battle.net/oauth/token?grant_type=client_credentials",
         "tokenPriceUrl": "https://us.api.blizzard.com/data/wow/token/index?namespace=dynamic-us"
     },

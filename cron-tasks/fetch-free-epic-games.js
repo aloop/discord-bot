@@ -1,9 +1,9 @@
 import { EmbedBuilder } from "discord.js";
 
 import { fetchNewGames } from "../models/epic-games-store.js";
-import loadConfig from "../utils/config.js";
+import loadSecrets from "../utils/load-secrets.js";
 
-const { channels: { deals = false } = {} } = await loadConfig();
+const { channels: { deals = false } = {} } = await loadSecrets();
 
 function postNewDeals(client, games) {
     if (games.length > 0 && deals) {
