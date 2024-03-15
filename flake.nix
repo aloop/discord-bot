@@ -51,7 +51,7 @@
 
       nixosModules.default = { config, pkgs, lib, ... }:
         let
-          inherit (lib) types mkIf mkDefault mkEnableOption mkOption;
+          inherit (lib) types mkIf mkEnableOption mkOption;
 
           cfg = config.services.aml-discord-bot;
 
@@ -63,6 +63,8 @@
 
             secretsFile = mkOption {
               type = with types; nullOr str;
+              description =
+                "Path to a json file containing secrets used by the bot";
               default = null;
             };
 
@@ -70,40 +72,50 @@
               http = {
                 listenPort = mkOption {
                   type = types.int;
+                  description = "Port for the bot's HTTP server";
                   default = 5000;
                 };
 
                 listenHost = mkOption {
                   type = types.str;
+                  description = "IP to bind to for the bot's HTTP server";
                   default = "127.0.0.1";
                 };
                 host = mkOption {
                   type = types.str;
+                  description = "The external host URL to present";
                   default = "http://localhost:5000";
                 };
               };
 
               timeZone = mkOption {
                 type = types.str;
+                description = "Set your time zone";
                 default = config.time.timeZone or "America/Los_Angeles";
               };
               locale = mkOption {
                 type = types.str;
+                description = "Set your locale";
                 default = "en-US";
               };
               country = mkOption {
                 type = types.str;
+                description = "Set the country code";
                 default = "US";
               };
 
               blizzard = {
                 authTokenUrl = mkOption {
                   type = types.str;
+                  description =
+                    "The URL used to fetch an auth token from Blizzard";
                   default =
                     "https://us.battle.net/oauth/token?grant_type=client_credentials";
                 };
                 tokenPriceUrl = mkOption {
                   type = types.str;
+                  description =
+                    "The URL used to fetch the current WoW token price";
                   default =
                     "https://us.api.blizzard.com/data/wow/token/index?namespace=dynamic-us";
                 };
@@ -112,10 +124,14 @@
               epicGamesStore = {
                 productBaseUrl = mkOption {
                   type = types.str;
+                  description =
+                    "The URL used as a base for building a url to a product on the Epic Games Store";
                   default = "https://www.epicgames.com/store/en-US/product/";
                 };
                 freeGamesApiUrl = mkOption {
                   type = types.str;
+                  description =
+                    "The URL used to fetch the current free games from the Epic Games Store API";
                   default =
                     "https://store-site-backend-static.ak.epicgames.com/freeGamesPromotions?locale=en_US&country=US&allowCountries=US";
                 };
