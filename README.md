@@ -4,50 +4,62 @@
 
 Copy `config.example.json` to `config.json` and fill in the fields
 
-## Installation
+## Usage
 
-### Docker
+First, add this repository as an input to your flake.nix:
 
-#### Docker Compose
-
-Copy `docker-compose.example.yml` from this repository and alter it to your liking.
-
-#### Docker Run
-
-To deploy the bot commands, execute the following:
-
-```sh
-docker run --rm -it -v "$(pwd)/config.json:/app/config.json:ro" aloop/discord-bot:latest pnpm run deploy-commands
+```nix
+aml-discord-bot = {
+  url = "github:aloop/discord-bot";
+  # Probably want to follow your nixpkgs
+  inputs.nixpkgs.follows = "nixpkgs";
+};
 ```
 
-Then, to start the bot and webserver:
+Then add `aml-discord-bot.nixosModules.default` to the modules list of your nixosConfiguration.
 
-```sh
-docker run --rm -d -p 127.0.0.1:5000:5000/tcp -v "$(pwd)/config.json:/app/config.json:ro" -v "$(pwd)/db:/app/db" aloop/discord-bot:latest
+The following is an example configuration making use of sops-nix for secrets:
+
+```nix
+{
+  services.aml-discord-bot = {
+    enable = true;
+    secretsFile = config.sops.secrets."discord-bot/secrets".path;
+    # Check config.example.json for an example of settings
+    settings = {
+      http = {
+        listenPort = 8080;
+        host = "https://bot.example.com";
+      };
+    };
+  };
+
+  sops.secrets."discord-bot/secrets" = {
+    sopsFile = ./secrets.yml;
+    # We use systemd's LoadCredential functionality, so permissions for the secrets
+    # file can be restricted.
+    mode = "0600";
+  };
+}
 ```
 
-#### Docker notes
+where `secrets.yml` looks like the following:
 
-You may want to set `listenHost` to 0.0.0.0 in your `config.json` so that the HTTP server binds to the container's ip.
-
-### systemd
-
-Note that if you have changed the listenPort in config.json from the default of 5000 you will need to change `SocketBindAllow=tcp:5000` in the systemd service file to reflect that change.
-
-```sh
-sudo cp systemd/discord-bot.service /etc/systemd/system/
-sudo systemctl daemon-reload
-# Don't forget to run this every time the lockfile updates!
-pnpm install --prod --frozen-lockfile
-# deploy-commands also needs to be run whenever a command is either added or
-# has had its interface updated
-pnpm run deploy-commands
-sudo systemctl start discord-bot
-```
-
-### Standalone
-
-```sh
-pnpm install --prod --frozen-lockfile
-pnpm run serve
+```yaml
+discord-bot:
+  secrets: |
+    {
+      "discord": {
+        "clientId": "",
+        "guildId": "",
+        "token": ""
+      },
+      "channels": {
+        "deals": ""
+      },
+      "blizzard": {
+        "clientId": "",
+        "clientSecret": ""
+      }
+    }
 ```
