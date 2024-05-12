@@ -188,6 +188,7 @@
                   RestrictAddressFamilies = [
                     "AF_INET"
                     "AF_INET6"
+                    "AF_UNIX"
                   ];
                   SocketBindDeny = "any";
                   SocketBindAllow = "tcp:${toString cfg.settings.http.listenPort}";
