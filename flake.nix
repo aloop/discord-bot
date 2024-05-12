@@ -128,10 +128,12 @@
                 wants = [
                   "network-online.target"
                   "nss-lookup.target"
+                  "postgresql.service"
                 ];
                 after = [
                   "network-online.target"
                   "nss-lookup.target"
+                  "postgresql.service"
                 ];
                 wantedBy = [ "multi-user.target" ];
 
