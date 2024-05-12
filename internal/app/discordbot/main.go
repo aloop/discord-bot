@@ -10,6 +10,7 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"syscall"
 	"time"
 
 	"github.com/bwmarrin/discordgo"
@@ -340,7 +341,7 @@ func Run(
 	defer stopEgsFreeGamesInterval()
 
 	stop := make(chan os.Signal, 1)
-	signal.Notify(stop, os.Interrupt, os.Kill)
+	signal.Notify(stop, os.Interrupt, os.Kill, syscall.SIGINT, syscall.SIGTERM)
 	log.Println("Press Ctrl+c to exit")
 	<-stop
 
