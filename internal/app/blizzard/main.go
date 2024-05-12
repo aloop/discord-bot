@@ -208,9 +208,8 @@ func (b *BlizzardClient) FetchTokenPrice() (WowTokenPrice, error) {
 	return newTokenPrice, nil
 }
 
-func (b *BlizzardClient) StartWowTokenFetchInterval() func() {
+func (b *BlizzardClient) StartWowTokenFetchInterval(ctx context.Context) {
 	ticker := time.NewTicker(5 * time.Minute)
-	done := make(chan bool, 1)
 
 	// Do an initial fetch before deferring to the timer
 	_, err := b.FetchTokenPrice()
@@ -227,16 +226,13 @@ func (b *BlizzardClient) StartWowTokenFetchInterval() func() {
 				if err != nil {
 					log.Println(err)
 				}
-			case <-done:
-				log.Println("WoW Token: stopping fetch interval")
+			case <-ctx.Done():
 				ticker.Stop()
+				log.Println("WoW Token: stopping fetch interval")
+				return
 			}
 		}
 	}()
-
-	return func() {
-		done <- true
-	}
 }
 
 func (b *BlizzardClient) GeneratePriceChart(unit string, period int) (*bytes.Buffer, error) {

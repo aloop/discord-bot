@@ -110,11 +110,11 @@ func New(
 }
 
 func (egs *EGSClient) StartFreeGamesFetchInterval(
+	ctx context.Context,
 	discord *discordgo.Session,
 	channel string,
-) func() {
+) {
 	ticker := time.NewTicker(4 * time.Hour)
-	done := make(chan bool, 1)
 
 	go func() {
 		for {
@@ -136,16 +136,13 @@ func (egs *EGSClient) StartFreeGamesFetchInterval(
 						log.Println(err)
 					}
 				}
-			case <-done:
-				log.Println("EGS Free Games: stopping fetch interval")
+			case <-ctx.Done():
 				ticker.Stop()
+				log.Println("EGS Free Games: stopping fetch interval")
+				return
 			}
 		}
 	}()
-
-	return func() {
-		done <- true
-	}
 }
 
 func createDiscordMessageEmbeds(games FreeGames) []*discordgo.MessageEmbed {

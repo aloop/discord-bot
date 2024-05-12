@@ -331,18 +331,20 @@ func Run(
 		return err
 	}
 
-	stopWowTokenInterval := blizzardClient.StartWowTokenFetchInterval()
-	defer stopWowTokenInterval()
+	timerCtx, cancelTimers := context.WithCancel(ctx)
 
-	stopEgsFreeGamesInterval := egsClient.StartFreeGamesFetchInterval(
+	blizzardClient.StartWowTokenFetchInterval(timerCtx)
+
+	egsClient.StartFreeGamesFetchInterval(
+		timerCtx,
 		DiscordSession,
 		secrets.Channels.Deals,
 	)
-	defer stopEgsFreeGamesInterval()
+
+	defer cancelTimers()
 
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt, os.Kill, syscall.SIGINT, syscall.SIGTERM)
-	log.Println("Press Ctrl+c to exit")
 	<-stop
 
 	log.Println("Removing commands...")
