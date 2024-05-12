@@ -1,0 +1,15 @@
+{
+    "http": {
+        "host": "https://example.com",
+        "listenHost": "127.0.0.1",
+        "listenPort": 5000
+    },
+    "blizzard": {
+        "authTokenUrl": "https://us.battle.net/oauth/token?grant_type=client_credentials",
+        "tokenPriceUrl": "https://us.api.blizzard.com/data/wow/token/index?namespace=dynamic-us"
+    },
+    "epicGamesStore": {
+        "productBaseUrl": "https://www.epicgames.com/store/en-US/product/",
+        "freeGamesApiUrl": "https://store-site-backend-static.ak.epicgames.com/freeGamesPromotions?locale=en_US&country=US&allowCountries=US"
+    }
+}
