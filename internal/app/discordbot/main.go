@@ -45,7 +45,7 @@ var (
 
 	commands = []*discordgo.ApplicationCommand{
 		{
-			Name:        "wow-token",
+			Name:        "wowtoken",
 			Description: "Displays the current WoW token price in gold",
 			Options: []*discordgo.ApplicationCommandOption{
 				{
@@ -92,7 +92,7 @@ var (
 	}
 
 	commandHandlers = map[string]func(s *discordgo.Session, i *discordgo.InteractionCreate){
-		"wow-token": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
+		"wowtoken": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
 			options := i.ApplicationCommandData().Options
 
 			optionMap := make(
@@ -110,7 +110,7 @@ var (
 
 			if option, ok := optionMap["chart"]; ok {
 				if err := json.Unmarshal([]byte(option.StringValue()), &chartOpts); err != nil {
-					log.Printf("Failed to parse wow-token options: %v", err)
+					log.Printf("Failed to parse /wowtoken options: %v", err)
 					// TODO: Should probably send back an error response to the user
 					return
 				}
