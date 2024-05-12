@@ -137,11 +137,8 @@
                 ];
                 wantedBy = [ "multi-user.target" ];
 
-                script = ''
-                  ${pkg}/bin/discord-bot
-                '';
-
                 serviceConfig = {
+                  ExecStart = "${pkg}/bin/discord-bot";
                   DynamicUser = true;
                   User = cfg.user;
                   Restart = "on-failure";
