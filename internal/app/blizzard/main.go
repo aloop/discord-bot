@@ -3,12 +3,12 @@ package blizzard
 import (
 	"bytes"
 	"context"
-	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
 	"net/http"
+	"net/url"
 	"time"
 
 	"github.com/jackc/pgx/v5/pgtype"
@@ -79,23 +79,19 @@ func New(
 	}
 }
 
-func (b *BlizzardClient) fetchAuthToken() (string, error) {
+func (b *BlizzardClient) fetchAuthToken(clientId string, clientSecret string) (string, error) {
 	if b.token.token != "" && b.token.expiresAt > time.Now().Unix() {
 		return b.token.token, nil
 	}
 
-	req, err := http.NewRequest("POST", b.config.Blizzard.AuthTokenUrl, nil)
+	req, err := http.NewRequest(http.MethodPost, b.config.Blizzard.AuthTokenUrl, nil)
 	if err != nil {
 		return "", err
 	}
 
-	basicAuthCreds := base64.StdEncoding.EncodeToString(
-		[]byte(fmt.Sprintf("%s:%s", b.secrets.Blizzard.ClientID, b.secrets.Blizzard.ClientSecret)),
-	)
-
-	req.Header.Add(
-		"Authorization",
-		fmt.Sprintf("Basic %s", basicAuthCreds),
+	req.SetBasicAuth(
+		url.QueryEscape(clientId),
+		url.QueryEscape(clientSecret),
 	)
 
 	res, err := httpClient.Do(req)
@@ -138,7 +134,6 @@ func (b *BlizzardClient) FetchTokenPrice() (WowTokenPrice, error) {
 		timeSinceLastUpdate := int64(time.Now().UTC().Sub(data.Updated.Time).Minutes())
 
 		if timeSinceLastUpdate < WowTokenGracePeriod {
-			log.Println("WoW Token: we have the latest result in our database, returning it")
 			return WowTokenPrice{
 				Updated: data.Updated.Time,
 				Price:   data.Price,
@@ -148,12 +143,12 @@ func (b *BlizzardClient) FetchTokenPrice() (WowTokenPrice, error) {
 
 	log.Println("Fetching latest WoW token price")
 
-	req, err := http.NewRequest("GET", b.config.Blizzard.TokenPriceUrl, nil)
+	req, err := http.NewRequest(http.MethodGet, b.config.Blizzard.TokenPriceUrl, nil)
 	if err != nil {
 		return WowTokenPrice{}, err
 	}
 
-	token, err := b.fetchAuthToken()
+	token, err := b.fetchAuthToken(b.secrets.Blizzard.ClientID, b.secrets.Blizzard.ClientSecret)
 	if err != nil {
 		return WowTokenPrice{}, err
 	}
