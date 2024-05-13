@@ -333,12 +333,13 @@ func Run(
 
 	timerCtx, cancelTimers := context.WithCancel(ctx)
 
-	blizzardClient.StartWowTokenFetchInterval(timerCtx)
+	blizzardClient.StartWowTokenFetchInterval(timerCtx, 5*time.Minute)
 
 	egsClient.StartFreeGamesFetchInterval(
 		timerCtx,
 		DiscordSession,
 		secrets.Channels.Deals,
+		4*time.Hour,
 	)
 
 	defer cancelTimers()

@@ -113,8 +113,9 @@ func (egs *EGSClient) StartFreeGamesFetchInterval(
 	ctx context.Context,
 	discord *discordgo.Session,
 	channel string,
+	period time.Duration,
 ) {
-	ticker := time.NewTicker(4 * time.Hour)
+	ticker := time.NewTicker(period)
 
 	go func() {
 		for {

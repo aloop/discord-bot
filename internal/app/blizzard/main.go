@@ -208,8 +208,8 @@ func (b *BlizzardClient) FetchTokenPrice() (WowTokenPrice, error) {
 	return newTokenPrice, nil
 }
 
-func (b *BlizzardClient) StartWowTokenFetchInterval(ctx context.Context) {
-	ticker := time.NewTicker(5 * time.Minute)
+func (b *BlizzardClient) StartWowTokenFetchInterval(ctx context.Context, period time.Duration) {
+	ticker := time.NewTicker(period)
 
 	// Do an initial fetch before deferring to the timer
 	_, err := b.FetchTokenPrice()
@@ -221,14 +221,14 @@ func (b *BlizzardClient) StartWowTokenFetchInterval(ctx context.Context) {
 		for {
 			select {
 			case <-ticker.C:
-				log.Println("WoW Token: Attempting to fetch latest token price")
+				log.Println("WoW Token Timer: Attempting to fetch latest token price")
 				_, err := b.FetchTokenPrice()
 				if err != nil {
 					log.Println(err)
 				}
 			case <-ctx.Done():
 				ticker.Stop()
-				log.Println("WoW Token: stopping fetch interval")
+				log.Println("WoW Token Timer: stopped")
 				return
 			}
 		}
@@ -273,8 +273,11 @@ func (b *BlizzardClient) GeneratePriceChart(unit string, period int) (*bytes.Buf
 		return bytes.NewBuffer([]byte{}), err
 	}
 
-	var dates []time.Time
-	var prices []float64
+	numRows := len(rows)
+
+	dates := make([]time.Time, 0, numRows)
+	prices := make([]float64, 0, numRows)
+
 	for _, token := range rows {
 		dates = append(dates, token.Updated.Time)
 		prices = append(prices, float64(token.Price))
