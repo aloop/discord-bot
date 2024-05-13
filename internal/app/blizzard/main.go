@@ -24,7 +24,7 @@ import (
 
 const (
 	graphBg             string = "36393f"
-	graphLineColor      string = "FFD700"
+	graphLineColor      string = "#7be067"
 	WowTokenGracePeriod        = 20 // Minutes
 )
 
