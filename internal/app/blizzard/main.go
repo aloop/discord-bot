@@ -292,6 +292,11 @@ func (b *BlizzardClient) GeneratePriceChart(unit string, period int) (*bytes.Buf
 		formattedUnit,
 	)
 
+	baseWidth := 400
+	baseHeight := 300
+	baseDPI := 96.0
+	multiplier := 2
+
 	timeSeries := &chart.TimeSeries{
 		Style: chart.Style{
 			StrokeColor: drawing.ColorFromHex(graphLineColor),
@@ -304,15 +309,16 @@ func (b *BlizzardClient) GeneratePriceChart(unit string, period int) (*bytes.Buf
 		Style: chart.Style{
 			StrokeColor: drawing.ColorFromHex(graphLineColor),
 			FillColor:   drawing.ColorFromHex(graphLineColor).WithAlpha(24),
-			StrokeWidth: 3.0,
+			StrokeWidth: 3.0 * float64(multiplier),
 		},
 		InnerSeries: timeSeries,
 		Period:      smoothing,
 	}
 
 	graph := chart.Chart{
-		Width:  400,
-		Height: 300,
+		Width:  baseWidth * multiplier,
+		Height: baseHeight * multiplier,
+		DPI:    baseDPI * float64(multiplier),
 		TitleStyle: chart.Style{
 			FontColor: drawing.ColorWhite,
 			FontSize:  10,
