@@ -77,11 +77,18 @@ func (h *handlerData) handleChartRequest(w http.ResponseWriter, req *http.Reques
 		log.Println(err)
 
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("500 Internal Server Error"))
+		_, err := w.Write([]byte("500 Internal Server Error"))
+		if err != nil {
+			log.Printf("Failed to write HTTP error response\n%v\n", err)
+		}
+
 		return
 	}
 
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "image/png")
-	img.WriteTo(w)
+	_, err = img.WriteTo(w)
+	if err != nil {
+		log.Printf("Failed while outputting WoW token graph image\n%v\n", err)
+	}
 }

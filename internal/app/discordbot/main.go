@@ -3,7 +3,6 @@ package discordbot
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"flag"
 	"fmt"
 	"io"
@@ -177,7 +176,7 @@ var (
 				nextUpdateDelta = 1
 			}
 
-			s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+			err = s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 				Type: discordgo.InteractionResponseChannelMessageWithSource,
 				Data: &discordgo.InteractionResponseData{
 					Embeds: []*discordgo.MessageEmbed{
@@ -229,6 +228,9 @@ var (
 					Flags: discordgo.MessageFlagsEphemeral,
 				},
 			})
+			if err != nil {
+				log.Printf("Error while sending Discord Interaction Response\n%v\n", err)
+			}
 		},
 	}
 )
@@ -287,7 +289,7 @@ func Run(
 
 	DiscordSession, err := discordgo.New("Bot " + secrets.Discord.Token)
 	if err != nil {
-		return errors.New(fmt.Sprintf("Failed to start bot: %v", err))
+		return fmt.Errorf("Failed to start bot: %v", err)
 	}
 
 	DiscordSession.AddHandler(func(s *discordgo.Session, r *discordgo.Ready) {
@@ -302,7 +304,7 @@ func Run(
 
 	err = DiscordSession.Open()
 	if err != nil {
-		return errors.New(fmt.Sprintf("Cannot open the session: %v", err))
+		return fmt.Errorf("Cannot open the session: %v", err)
 	}
 
 	log.Println("Adding commands...")
@@ -345,7 +347,7 @@ func Run(
 	defer cancelTimers()
 
 	stop := make(chan os.Signal, 1)
-	signal.Notify(stop, os.Interrupt, os.Kill, syscall.SIGINT, syscall.SIGTERM)
+	signal.Notify(stop, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
 	<-stop
 
 	log.Println("Removing commands...")

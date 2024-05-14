@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -102,19 +101,16 @@ func (b *BlizzardClient) fetchAuthToken(clientId string, clientSecret string) (s
 	defer res.Body.Close()
 
 	if res.StatusCode < 200 || res.StatusCode > 299 {
-		return "", errors.New(
-			fmt.Sprintf(
-				"HTTP Status %s. Failed to obtain an auth token from the Blizzard API. Please verify that credentials are accurate",
-				res.Status,
-			),
+		return "", fmt.Errorf(
+			"HTTP Status %s. Failed to obtain an auth token from the Blizzard API. Please verify that credentials are accurate",
+			res.Status,
 		)
 	}
 
 	var result BlizzardAuthTokenAPIResponse
 	if err := json.NewDecoder(res.Body).Decode(&result); err != nil {
-		return "", errors.New(
-			fmt.Sprintf("Failed to fetch latest free games from the EGS api:\n%v", err),
-		)
+		return "",
+			fmt.Errorf("Failed to fetch latest free games from the EGS api:\n%v", err)
 	}
 
 	b.token.token = result.AccessToken
@@ -166,15 +162,17 @@ func (b *BlizzardClient) FetchTokenPrice() (WowTokenPrice, error) {
 	defer res.Body.Close()
 
 	if res.StatusCode < 200 || res.StatusCode > 299 {
-		return WowTokenPrice{}, errors.New(
-			fmt.Sprintf("HTTP error %s while attempting to fetch WoW Token price", res.Status),
+		return WowTokenPrice{}, fmt.Errorf(
+			"HTTP error %s while attempting to fetch WoW Token price",
+			res.Status,
 		)
 	}
 
 	var result WowTokenPriceAPIResponse
 	if err := json.NewDecoder(res.Body).Decode(&result); err != nil {
-		return WowTokenPrice{}, errors.New(
-			fmt.Sprintf("Failed to read body while fetching WoW Token price:\n%v", err),
+		return WowTokenPrice{}, fmt.Errorf(
+			"Failed to read body while fetching WoW Token price:\n%v",
+			err,
 		)
 	}
 
@@ -258,13 +256,13 @@ func (b *BlizzardClient) GeneratePriceChart(unit string, period int) (*bytes.Buf
 			smoothing = 64
 		}
 	default:
-		err := errors.New(fmt.Sprintf(`Invalid unit type "%s" given`, unit))
+		err := fmt.Errorf(`Invalid unit type "%s" given`, unit)
 		return bytes.NewBuffer([]byte{}), err
 	}
 
 	rows, err := b.db.GetAllTokenPricesSince(b.ctx, pgtype.Timestamptz{Time: t, Valid: true})
 	if err != nil {
-		err := errors.New(fmt.Sprintf("Failed to get token prices from database"))
+		err := fmt.Errorf("Failed to get token prices from database")
 		return bytes.NewBuffer([]byte{}), err
 	}
 
@@ -279,7 +277,7 @@ func (b *BlizzardClient) GeneratePriceChart(unit string, period int) (*bytes.Buf
 	}
 
 	if len(dates) < 2 {
-		err := errors.New(fmt.Sprintf("Not enough price history to generate chart"))
+		err := fmt.Errorf("Not enough price history to generate chart")
 		return bytes.NewBuffer([]byte{}), err
 	}
 

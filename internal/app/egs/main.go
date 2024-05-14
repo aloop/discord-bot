@@ -3,7 +3,6 @@ package egs
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -183,31 +182,28 @@ func createDiscordMessageEmbeds(games FreeGames) []*discordgo.MessageEmbed {
 func (egs *EGSClient) FetchNewFreeGames() (FreeGames, error) {
 	res, err := httpClient.Get(egs.config.EpicGamesStore.FreeGamesApiUrl)
 	if err != nil {
-		return nil, errors.New(
-			fmt.Sprintf(
+		return nil,
+			fmt.Errorf(
 				"Failed to fetch latest free games from the Epic Games Store API:\n%v",
 				err,
-			),
-		)
+			)
 	}
 
 	defer res.Body.Close()
 
 	if res.StatusCode < 200 || res.StatusCode > 299 {
-		return nil, errors.New(
-			fmt.Sprintf(
+		return nil,
+			fmt.Errorf(
 				"Failed to fetch latest free games from the Epic Games Store API - API returned Status: %s",
 				res.Status,
-			),
-		)
+			)
 	}
 
 	var result freeGameAPIResponse
 
 	if err := json.NewDecoder(res.Body).Decode(&result); err != nil {
-		return nil, errors.New(
-			fmt.Sprintf("EGS API: Failed to parse json response:\n%+v", err),
-		)
+		return nil,
+			fmt.Errorf("EGS API: Failed to parse json response:\n%+v", err)
 	}
 
 	newFreeGames := selectCurrentFreeGames(result.Data.Catalog.SearchStore.Elements)
