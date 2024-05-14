@@ -6,6 +6,8 @@
   outputs =
     { self, nixpkgs }:
     let
+      lastModifiedDate = self.lastModifiedDate or self.lastModified or "19700101";
+      version = builtins.substring 0 8 lastModifiedDate;
       # Systems supported
       allSystems = [
         "x86_64-linux"
@@ -19,18 +21,27 @@
     {
       packages = forAllSystems (
         { pkgs }:
-        {
-          default = pkgs.buildGoModule {
+        rec {
+          aml-discord-bot = pkgs.buildGoModule {
             pname = "aml-discord-bot";
-            version = "0.1.0";
+            inherit version;
 
             src = ./.;
             vendorHash = "sha256-VfflDgSvjm3TRcZKEygfQjZRFkiDOLS3iGaFdN6QZxk=";
 
             ldflags = [ "-s -w" ];
           };
+
+          default = aml-discord-bot;
         }
       );
+
+      overlays = rec {
+        default = aml-discord-bot;
+        aml-discord-bot = final: prev: {
+          aml-discord-bot = self.packages."${final.system}".aml-discord-bot;
+        };
+      };
 
       nixosModules.default =
         {
@@ -119,7 +130,7 @@
           config = mkIf cfg.enable {
             systemd.services.discord-bot =
               let
-                pkg = self.packages.${pkgs.stdenv.hostPlatform.system}.default;
+                pkg = self.packages.${pkgs.stdenv.hostPlatform.system}.aml-discord-bot;
               in
               {
                 description = "A Simple Discord Bot";
