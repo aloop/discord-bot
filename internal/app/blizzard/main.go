@@ -22,9 +22,14 @@ import (
 )
 
 const (
-	graphBg             string = "36393f"
-	graphLineColor      string = "#7be067"
-	WowTokenGracePeriod        = 20 // Minutes
+	chartBg             string  = "36393f"
+	chartLineColor      string  = "7be067"
+	WowTokenGracePeriod int64   = 20 // Minutes
+	multiplier          int     = 3
+	chartWidth          int     = 400 * multiplier
+	chartHeight         int     = 300 * multiplier
+	chartLineThickness  float64 = 1.0 * float64(multiplier)
+	chartDPI            float64 = 96.0 * float64(multiplier)
 )
 
 var (
@@ -232,7 +237,6 @@ func (b *BlizzardClient) GeneratePriceChart(unit string, period int) (*bytes.Buf
 	var t time.Time
 
 	dateFormatter := chart.TimeValueFormatterWithFormat("Jan 2 - 03:04PM")
-	smoothing := 1
 
 	switch unit {
 	case "hours":
@@ -240,21 +244,9 @@ func (b *BlizzardClient) GeneratePriceChart(unit string, period int) (*bytes.Buf
 	case "days":
 		t = time.Now().UTC().AddDate(0, 0, period*-1)
 		dateFormatter = chart.TimeValueFormatterWithFormat("Jan 2")
-
-		if period > 10 {
-			smoothing = 64
-		} else {
-			smoothing = 32
-		}
 	case "months":
 		t = time.Now().UTC().AddDate(0, period*-1, 0)
 		dateFormatter = chart.TimeValueFormatterWithFormat("Jan 2, 2006")
-
-		if period > 3 {
-			smoothing = 128
-		} else {
-			smoothing = 64
-		}
 	default:
 		err := fmt.Errorf(`Invalid unit type "%s" given`, unit)
 		return bytes.NewBuffer([]byte{}), err
@@ -292,42 +284,29 @@ func (b *BlizzardClient) GeneratePriceChart(unit string, period int) (*bytes.Buf
 		formattedUnit,
 	)
 
-	baseWidth := 400
-	baseHeight := 300
-	baseDPI := 96.0
-	multiplier := 2
-
 	timeSeries := &chart.TimeSeries{
-		Style: chart.Style{
-			StrokeColor: drawing.ColorFromHex(graphLineColor),
-		},
 		XValues: dates,
 		YValues: prices,
-	}
-
-	smoothedSeries := &chart.SMASeries{
 		Style: chart.Style{
-			StrokeColor: drawing.ColorFromHex(graphLineColor),
-			FillColor:   drawing.ColorFromHex(graphLineColor).WithAlpha(24),
-			StrokeWidth: 3.0 * float64(multiplier),
+			StrokeColor: drawing.ColorFromHex(chartLineColor),
+			FillColor:   drawing.ColorFromHex(chartLineColor).WithAlpha(16),
+			StrokeWidth: chartLineThickness,
 		},
-		InnerSeries: timeSeries,
-		Period:      smoothing,
 	}
 
 	graph := chart.Chart{
-		Width:  baseWidth * multiplier,
-		Height: baseHeight * multiplier,
-		DPI:    baseDPI * float64(multiplier),
+		Width:  chartWidth,
+		Height: chartHeight,
+		DPI:    chartDPI,
 		TitleStyle: chart.Style{
 			FontColor: drawing.ColorWhite,
 			FontSize:  10,
 		},
 		Canvas: chart.Style{
-			FillColor: drawing.ColorFromHex(graphBg),
+			FillColor: drawing.ColorFromHex(chartBg),
 		},
 		Background: chart.Style{
-			FillColor: drawing.ColorFromHex(graphBg),
+			FillColor: drawing.ColorFromHex(chartBg),
 			Padding: chart.Box{
 				Top:    50,
 				Left:   10,
@@ -358,7 +337,7 @@ func (b *BlizzardClient) GeneratePriceChart(unit string, period int) (*bytes.Buf
 			},
 		},
 		Series: []chart.Series{
-			smoothedSeries,
+			timeSeries,
 		},
 	}
 
