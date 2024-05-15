@@ -16,7 +16,7 @@ func main() {
 		log.Printf("Could not determine working directory \"%v\"", err)
 	}
 
-	if err := bot.Run(ctx, os.Stdout, os.Getenv, wd, os.Args); err != nil {
+	if err := bot.Run(ctx, os.Getenv, wd); err != nil {
 		log.Fatalf("%s\n", err)
 	}
 }

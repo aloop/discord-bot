@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"io"
 	"log"
 	"os"
 	"os/signal"
@@ -237,10 +236,8 @@ var (
 
 func Run(
 	ctx context.Context,
-	w io.Writer,
 	getenv func(string) string,
 	workdir string,
-	args []string,
 ) error {
 	ctx, cancel := signal.NotifyContext(ctx, os.Interrupt)
 	defer cancel()
