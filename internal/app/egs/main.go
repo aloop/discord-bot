@@ -300,12 +300,17 @@ func (game *freeGame) getUrl() string {
 }
 
 func (game *freeGame) getThumbnail() string {
+	url := ""
 	for _, img := range game.Images {
-		if strings.ToLower(img.Type) == "thumbnail" {
+		switch strings.ToLower(img.Type) {
+		case "thumbnail":
+			// Prefer thumbnail if available, so return immediately when found
 			return img.Url
+		case "offerimagewide":
+			url = img.Url
 		}
 	}
-	return ""
+	return url
 }
 
 func selectCurrentFreeGames(games freeGames) freeGames {
