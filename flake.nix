@@ -29,7 +29,12 @@
             src = ./.;
             vendorHash = "sha256-VfflDgSvjm3TRcZKEygfQjZRFkiDOLS3iGaFdN6QZxk=";
 
-            ldflags = [ "-s -w" ];
+            CGO_ENABLED = 0;
+
+            ldflags = [
+              "-s"
+              "-w"
+            ];
           };
 
           default = aml-discord-bot;
