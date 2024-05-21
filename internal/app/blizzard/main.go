@@ -115,7 +115,7 @@ func (b *BlizzardClient) fetchAuthToken(clientId string, clientSecret string) (s
 	var result BlizzardAuthTokenAPIResponse
 	if err := json.NewDecoder(res.Body).Decode(&result); err != nil {
 		return "",
-			fmt.Errorf("Failed to fetch latest free games from the EGS api:\n%v", err)
+			fmt.Errorf("failed to fetch latest free games from the EGS api:\n%v", err)
 	}
 
 	b.token.token = result.AccessToken
@@ -176,7 +176,7 @@ func (b *BlizzardClient) FetchTokenPrice() (WowTokenPrice, error) {
 	var result WowTokenPriceAPIResponse
 	if err := json.NewDecoder(res.Body).Decode(&result); err != nil {
 		return WowTokenPrice{}, fmt.Errorf(
-			"Failed to read body while fetching WoW Token price:\n%v",
+			"failed to read body while fetching WoW Token price:\n%v",
 			err,
 		)
 	}
@@ -248,13 +248,13 @@ func (b *BlizzardClient) GeneratePriceChart(unit string, period int) (*bytes.Buf
 		t = time.Now().UTC().AddDate(0, period*-1, 0)
 		dateFormatter = chart.TimeValueFormatterWithFormat("Jan 2, 2006")
 	default:
-		err := fmt.Errorf(`Invalid unit type "%s" given`, unit)
+		err := fmt.Errorf(`invalid unit type "%s" given`, unit)
 		return bytes.NewBuffer([]byte{}), err
 	}
 
 	rows, err := b.db.GetAllTokenPricesSince(b.ctx, pgtype.Timestamptz{Time: t, Valid: true})
 	if err != nil {
-		err := fmt.Errorf("Failed to get token prices from database")
+		err := fmt.Errorf("failed to get token prices from database")
 		return bytes.NewBuffer([]byte{}), err
 	}
 
@@ -269,7 +269,7 @@ func (b *BlizzardClient) GeneratePriceChart(unit string, period int) (*bytes.Buf
 	}
 
 	if len(dates) < 2 {
-		err := fmt.Errorf("Not enough price history to generate chart")
+		err := fmt.Errorf("not enough price history to generate chart")
 		return bytes.NewBuffer([]byte{}), err
 	}
 
