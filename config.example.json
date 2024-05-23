@@ -2,7 +2,8 @@
     "http": {
         "host": "https://example.com",
         "listenHost": "127.0.0.1",
-        "listenPort": 5000
+        "listenPort": 5000,
+        "socketPermissions": "0666"
     },
     "blizzard": {
         "authTokenUrl": "https://us.battle.net/oauth/token?grant_type=client_credentials",

@@ -38,7 +38,7 @@ func Run(ctx context.Context, b *blizzard.BlizzardClient, c *config.Config) erro
 		isUnixSocket = true
 		socketPath = strings.TrimPrefix(c.HTTP.ListenHost, "unix:")
 
-		listener, err = createUnixSocketListener(socketPath)
+		listener, err = createUnixSocketListener(socketPath, c.HTTP.SocketPermissions)
 		if err != nil {
 			return fmt.Errorf("error creating unix socket listener: %v", err)
 		}
@@ -71,7 +71,7 @@ func Run(ctx context.Context, b *blizzard.BlizzardClient, c *config.Config) erro
 	return nil
 }
 
-func createUnixSocketListener(socketPath string) (net.Listener, error) {
+func createUnixSocketListener(socketPath string, permissionsStr string) (net.Listener, error) {
 	// Attempt to remove the socket if it already exists
 	if err := os.Remove(socketPath); err != nil && !os.IsNotExist(err) {
 		return nil, fmt.Errorf("could not remove existing socket at \"%s\": %v", socketPath, err)
@@ -86,8 +86,12 @@ func createUnixSocketListener(socketPath string) (net.Listener, error) {
 		)
 	}
 
-	// TODO: add config options to set socket permissions
-	if err := os.Chmod(socketPath, 0660); err != nil {
+	permissions, err := strconv.ParseUint(permissionsStr, 8, 32)
+	if err != nil {
+		return nil, fmt.Errorf("failed to convert socketPermissions to octal uint32: %v", err)
+	}
+
+	if err := os.Chmod(socketPath, os.FileMode(permissions)); err != nil {
 		return nil, fmt.Errorf("failed to set unix socket permissions: %v", err)
 	}
 

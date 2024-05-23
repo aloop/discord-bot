@@ -97,6 +97,11 @@
                   description = "IP to bind to for the bot's HTTP server";
                   default = "127.0.0.1";
                 };
+                socketPermissions = mkOption {
+                  type = types.str;
+                  description = "Permissions for the unix socket when used";
+                  default = "0666";
+                };
                 host = mkOption {
                   type = types.str;
                   description = "The external host URL to present";
@@ -215,7 +220,7 @@
                   StateDirectoryMode = "0750";
 
                   RuntimeDirectory = "discord-bot";
-                  RuntimeDirectoryMode = "0750";
+                  RuntimeDirectoryMode = "0755";
                 };
               };
           };

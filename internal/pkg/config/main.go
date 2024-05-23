@@ -16,9 +16,10 @@ type Config struct {
 }
 
 type HTTPConfig struct {
-	Host       string `json:"host"`
-	ListenHost string `json:"listenHost"`
-	ListenPort int    `json:"listenPort"`
+	Host              string `json:"host"`
+	SocketPermissions string `json:"socketPermissions"`
+	ListenHost        string `json:"listenHost"`
+	ListenPort        int    `json:"listenPort"`
 }
 
 type BlizzardConfig struct {
@@ -34,9 +35,10 @@ type EpicGamesStoreConfig struct {
 func New(path string) *Config {
 	config := &Config{
 		HTTP: HTTPConfig{
-			Host:       "http://localhost",
-			ListenHost: "127.0.0.1",
-			ListenPort: 5000,
+			Host:              "http://localhost",
+			ListenHost:        "127.0.0.1",
+			ListenPort:        5000,
+			SocketPermissions: "0666", // User: rw, Group: rw, Other: rw
 		},
 		Blizzard: BlizzardConfig{
 			AuthTokenUrl:  "https://us.battle.net/oauth/token?grant_type=client_credentials",
@@ -74,6 +76,10 @@ func (config *Config) Load(path string) {
 func (config *Config) ValidateConfig() {
 	if config.HTTP.Host == "" {
 		log.Fatal("Config: HTTP host not set! Exiting...")
+	}
+
+	if config.HTTP.SocketPermissions == "" {
+		log.Fatal("Config: Socket Permissions not set! Exiting...")
 	}
 
 	if config.HTTP.ListenHost == "" {
