@@ -87,7 +87,7 @@ func createUnixSocketListener(socketPath string) (net.Listener, error) {
 	}
 
 	// TODO: add config options to set socket permissions
-	if err := os.Chmod(socketPath, 0640); err != nil {
+	if err := os.Chmod(socketPath, 0660); err != nil {
 		return nil, fmt.Errorf("failed to set unix socket permissions: %v", err)
 	}
 
