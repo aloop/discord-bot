@@ -212,7 +212,8 @@ func (egs *EGSClient) FetchNewFreeGames() (FreeGames, error) {
 
 	currentFreeGames, err := egs.db.GetCurrentFreeGames(context.Background())
 	if err != nil {
-		log.Printf("EGS Free Games: Failed to fetch current free games from DB")
+		return nil,
+			fmt.Errorf("EGS Free Games: Failed to fetch current free games from DB")
 	}
 
 OUTER:
