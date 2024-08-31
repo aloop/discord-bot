@@ -9,6 +9,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/aloop/discord-bot/internal/app/blizzard"
 	"github.com/aloop/discord-bot/internal/pkg/config"
@@ -129,15 +130,21 @@ func (h *handlerData) handleChartRequest(w http.ResponseWriter, req *http.Reques
 		return
 	}
 
-	img, err := h.blizzard.GeneratePriceChart(unit, int(period))
+	img, lastUpdate, nextUpdate, err := h.blizzard.GeneratePriceChart(unit, int(period))
 	if err != nil {
 		log.Printf("failed to generate price chart for request: %v", err)
 		http.Error(w, "500 Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
+	secondsUntilUpdate := int64(time.Until(nextUpdate.UTC()).Seconds())
+
 	w.Header().Set("Content-Type", "image/png")
+	w.Header().Set("Vary", "accept")
+	w.Header().
+		Set("Cache-Control", fmt.Sprintf("public, max-age=%d", secondsUntilUpdate))
+	w.Header().Set("Last-Modified", lastUpdate.UTC().Format(http.TimeFormat))
+	w.WriteHeader(http.StatusOK)
 	_, err = img.WriteTo(w)
 	if err != nil {
 		log.Printf("Failed while outputting WoW token graph image\n%v\n", err)
