@@ -236,7 +236,7 @@ func (b *BlizzardClient) StartWowTokenFetchInterval(ctx context.Context, period 
 func (b *BlizzardClient) GeneratePriceChart(
 	unit string,
 	period int,
-) (*bytes.Buffer, time.Time, time.Time, error) {
+) (*bytes.Buffer, time.Time, error) {
 	var t time.Time
 
 	dateFormatter := chart.TimeValueFormatterWithFormat("Jan 2 - 03:04PM")
@@ -252,13 +252,13 @@ func (b *BlizzardClient) GeneratePriceChart(
 		dateFormatter = chart.TimeValueFormatterWithFormat("Jan 2, 2006")
 	default:
 		err := fmt.Errorf(`invalid unit type "%s" given`, unit)
-		return bytes.NewBuffer([]byte{}), time.Now(), time.Now(), err
+		return bytes.NewBuffer([]byte{}), time.Now(), err
 	}
 
 	rows, err := b.db.GetAllTokenPricesSince(b.ctx, pgtype.Timestamptz{Time: t, Valid: true})
 	if err != nil {
 		err := fmt.Errorf("failed to get token prices from database")
-		return bytes.NewBuffer([]byte{}), time.Now(), time.Now(), err
+		return bytes.NewBuffer([]byte{}), time.Now(), err
 	}
 
 	numRows := len(rows)
@@ -273,7 +273,7 @@ func (b *BlizzardClient) GeneratePriceChart(
 
 	if len(dates) < 2 {
 		err := fmt.Errorf("not enough price history to generate chart")
-		return bytes.NewBuffer([]byte{}), time.Now(), time.Now(), err
+		return bytes.NewBuffer([]byte{}), time.Now(), err
 	}
 
 	formattedUnit := unit
@@ -350,8 +350,7 @@ func (b *BlizzardClient) GeneratePriceChart(
 		log.Fatalf("Failed to render graph: %v", err)
 	}
 
-	latestTokenTime := dates[0]
-	nextUpdate := latestTokenTime.UTC().Add(time.Duration(WowTokenGracePeriod) * time.Minute)
+	lastUpdate := dates[0]
 
-	return buffer, latestTokenTime, nextUpdate, nil
+	return buffer, lastUpdate, nil
 }

@@ -130,7 +130,10 @@ func (h *handlerData) handleChartRequest(w http.ResponseWriter, req *http.Reques
 		return
 	}
 
-	img, lastUpdate, nextUpdate, err := h.blizzard.GeneratePriceChart(unit, int(period))
+	chart, lastUpdate, err := h.blizzard.GeneratePriceChart(unit, int(period))
+
+	nextUpdate := lastUpdate.UTC().Add(time.Duration(blizzard.WowTokenGracePeriod) * time.Minute)
+
 	if err != nil {
 		log.Printf("failed to generate price chart for request: %v", err)
 		http.Error(w, "500 Internal Server Error", http.StatusInternalServerError)
@@ -145,7 +148,7 @@ func (h *handlerData) handleChartRequest(w http.ResponseWriter, req *http.Reques
 		Set("Cache-Control", fmt.Sprintf("public, max-age=%d", secondsUntilUpdate))
 	w.Header().Set("Last-Modified", lastUpdate.UTC().Format(http.TimeFormat))
 	w.WriteHeader(http.StatusOK)
-	_, err = img.WriteTo(w)
+	_, err = chart.WriteTo(w)
 	if err != nil {
 		log.Printf("Failed while outputting WoW token graph image\n%v\n", err)
 	}
