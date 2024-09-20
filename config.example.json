@@ -11,6 +11,6 @@
     },
     "epicGamesStore": {
         "productBaseUrl": "https://www.epicgames.com/store/en-US/product/",
-        "freeGamesApiUrl": "https://store-site-backend-static.ak.epicgames.com/freeGamesPromotions?locale=en_US&country=US&allowCountries=US"
+        "freeGamesApiUrl": "https://store-site-backend-static.ak.epicgames.com/freeGamesPromotions?locale=en-US&country=US&allowCountries=US"
     }
 }

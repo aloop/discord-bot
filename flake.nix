@@ -131,7 +131,7 @@
                 freeGamesApiUrl = mkOption {
                   type = types.str;
                   description = "The URL used to fetch the current free games from the Epic Games Store API";
-                  default = "https://store-site-backend-static.ak.epicgames.com/freeGamesPromotions?locale=en_US&country=US&allowCountries=US";
+                  default = "https://store-site-backend-static.ak.epicgames.com/freeGamesPromotions?locale=en-US&country=US&allowCountries=US";
                 };
               };
             };
