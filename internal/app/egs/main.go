@@ -150,7 +150,6 @@ func createDiscordMessageEmbeds(games FreeGames) []*discordgo.MessageEmbed {
 	for _, game := range games {
 		newEmbed := &discordgo.MessageEmbed{
 			Title: game.Title,
-			URL:   game.URL,
 			Fields: []*discordgo.MessageEmbedField{
 				{
 					Name:  "Free at",
@@ -167,9 +166,26 @@ func createDiscordMessageEmbeds(games FreeGames) []*discordgo.MessageEmbed {
 			},
 		}
 
+		if encodedGameUrl, err := url.Parse(game.URL); err != nil {
+			log.Printf(
+				"EGS Free Games: Failed to parse game url, omitting game url: %v",
+				err,
+			)
+		} else {
+			newEmbed.URL = encodedGameUrl.String()
+		}
+
 		if game.ThumbnailURL != "" {
-			newEmbed.Image = &discordgo.MessageEmbedImage{
-				URL: game.ThumbnailURL,
+			encodedThumbnailUrl, err := url.Parse(game.ThumbnailURL)
+			if err != nil {
+				log.Printf(
+					"EGS Free Games: Failed to parse thumbnail image url, omitting thumbnail: %v",
+					err,
+				)
+			} else {
+				newEmbed.Image = &discordgo.MessageEmbedImage{
+					URL: encodedThumbnailUrl.String(),
+				}
 			}
 		}
 
