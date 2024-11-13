@@ -172,7 +172,7 @@
                     "secrets.json:${cfg.secretsFile}"
                   ];
 
-                  UMask = "0007";
+                  UMask = "0077";
                   DevicePolicy = "closed";
                   MemoryAccounting = true;
                   ProcSubset = "pid";
