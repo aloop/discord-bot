@@ -172,7 +172,7 @@
                     "secrets.json:${cfg.secretsFile}"
                   ];
 
-                  UMask = "0027";
+                  UMask = "0007";
                   DevicePolicy = "closed";
                   MemoryAccounting = true;
                   ProcSubset = "pid";
@@ -211,7 +211,8 @@
                   SocketBindDeny = "any";
                   SocketBindAllow = "tcp";
 
-                  CapabilityBoundingSet = [ ];
+                  AmbientCapabilities = "";
+                  CapabilityBoundingSet = "";
 
                   ConfigurationDirectory = "discord-bot";
                   ConfigurationDirectoryMode = "0750";
