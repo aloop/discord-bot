@@ -325,6 +325,8 @@ func (game *freeGame) getThumbnail() string {
 			return img.Url
 		case "offerimagewide":
 			url = img.Url
+		case "dieselstorefrontwide":
+			url = img.Url
 		}
 	}
 	return url
