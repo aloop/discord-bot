@@ -29,7 +29,7 @@
             src = ./.;
             vendorHash = "sha256-8w/c6d/AZUfi20SLbYA0N6bohA8R8EGqbjhcUS2h+q8=";
 
-            CGO_ENABLED = 0;
+            env.CGO_ENABLED = 0;
 
             ldflags = [
               "-s"
