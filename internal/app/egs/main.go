@@ -200,7 +200,7 @@ func (egs *EGSClient) FetchNewFreeGames() (FreeGames, error) {
 	if err != nil {
 		return nil,
 			fmt.Errorf(
-				"failed to fetch latest free games from the Epic Games Store API:\n%v",
+				"failed to fetch latest free games from the Epic Games Store API:\n%w",
 				err,
 			)
 	}

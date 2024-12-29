@@ -286,7 +286,7 @@ func Run(
 
 	DiscordSession, err := discordgo.New("Bot " + secrets.Discord.Token)
 	if err != nil {
-		return fmt.Errorf("failed to start bot: %v", err)
+		return fmt.Errorf("failed to start bot: %w", err)
 	}
 
 	DiscordSession.AddHandler(func(s *discordgo.Session, r *discordgo.Ready) {
@@ -301,7 +301,7 @@ func Run(
 
 	err = DiscordSession.Open()
 	if err != nil {
-		return fmt.Errorf("cannot open the session: %v", err)
+		return fmt.Errorf("cannot open the session: %w", err)
 	}
 
 	log.Println("Adding commands...")

@@ -115,7 +115,7 @@ func (b *BlizzardClient) fetchAuthToken(clientId string, clientSecret string) (s
 	var result BlizzardAuthTokenAPIResponse
 	if err := json.NewDecoder(res.Body).Decode(&result); err != nil {
 		return "",
-			fmt.Errorf("failed to fetch latest free games from the EGS api:\n%v", err)
+			fmt.Errorf("failed to fetch latest free games from the EGS api:\n%w", err)
 	}
 
 	b.token.token = result.AccessToken
@@ -176,7 +176,7 @@ func (b *BlizzardClient) FetchTokenPrice() (WowTokenPrice, error) {
 	var result WowTokenPriceAPIResponse
 	if err := json.NewDecoder(res.Body).Decode(&result); err != nil {
 		return WowTokenPrice{}, fmt.Errorf(
-			"failed to read body while fetching WoW Token price:\n%v",
+			"failed to read body while fetching WoW Token price:\n%w",
 			err,
 		)
 	}
@@ -198,7 +198,10 @@ func (b *BlizzardClient) FetchTokenPrice() (WowTokenPrice, error) {
 		Price: newTokenPrice.Price,
 	})
 	if err != nil {
-		log.Printf("WoW Token: Failed to add new price to database\n%v", err)
+		return WowTokenPrice{}, fmt.Errorf(
+			"WoW Token: Failed to add new price to database\n%w",
+			err,
+		)
 	}
 
 	log.Println("fetched latest token price, returning it")
